@@ -18,9 +18,7 @@ const RulesSchema = new Schema({
     enum: ["text", "long text", "boolean", "single choice", "multiple choice"],
     default: "text"
   },
-  message: {
-    type: String
-  }
+  message: String
 });
 
 export default model<IRulesSchema>("Rule", RulesSchema);
