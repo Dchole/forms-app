@@ -45,4 +45,5 @@ const TableSchema = new Schema(
   { timestamps: true }
 );
 
-export default model<ITableSchema>("Table", TableSchema);
+const TableModel = model<ITableSchema>("Table", TableSchema);
+export default TableModel;

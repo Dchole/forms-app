@@ -2,7 +2,7 @@ overwrite: true
 schema: "src/apollo/schema.gql"
 documents: null
 generates:
-  src/apollo/generated.d.ts:
+  src/apollo/types/generated.d.ts:
     plugins:
       - "typescript"
       - "typescript-resolvers"

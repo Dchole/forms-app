@@ -3,6 +3,7 @@ export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -20,15 +21,78 @@ export type Scalars = {
 
 
 
-export type Book = {
-  __typename?: 'Book';
-  title?: Maybe<Scalars['String']>;
-  author?: Maybe<Scalars['String']>;
-};
-
 export type Query = {
   __typename?: 'Query';
-  books?: Maybe<Array<Maybe<Book>>>;
+  user: User;
+  tables: TableConnection;
+};
+
+
+export type QueryUserArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryTablesArgs = {
+  limit?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  login: Token;
+  register: Scalars['String'];
+};
+
+
+export type MutationLoginArgs = {
+  args: LoginInput;
+};
+
+
+export type MutationRegisterArgs = {
+  args: RegisterInput;
+};
+
+export type LoginInput = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+};
+
+export type RegisterInput = {
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  email: Scalars['String'];
+  password: Scalars['String'];
+};
+
+export type Token = {
+  __typename?: 'Token';
+  accessToken: Scalars['String'];
+  refreshToken?: Maybe<Scalars['String']>;
+};
+
+export type User = {
+  __typename?: 'User';
+  fullName: Scalars['String'];
+  email: Scalars['String'];
+};
+
+export type Table = {
+  __typename?: 'Table';
+  id: Scalars['ID'];
+  title: Scalars['String'];
+  limit?: Maybe<Scalars['Int']>;
+  DeadLine?: Maybe<Scalars['String']>;
+  Fields: Array<Scalars['String']>;
+  disabled: Scalars['Boolean'];
+};
+
+export type TableConnection = {
+  __typename?: 'TableConnection';
+  node: Array<Table>;
+  hasMore: Scalars['Boolean'];
+  cursor: Scalars['ID'];
 };
 
 export type AdditionalEntityFields = {
@@ -114,20 +178,36 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  Book: ResolverTypeWrapper<Book>;
-  String: ResolverTypeWrapper<Scalars['String']>;
   Query: ResolverTypeWrapper<{}>;
-  AdditionalEntityFields: AdditionalEntityFields;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
+  Mutation: ResolverTypeWrapper<{}>;
+  String: ResolverTypeWrapper<Scalars['String']>;
+  LoginInput: LoginInput;
+  RegisterInput: RegisterInput;
+  Token: ResolverTypeWrapper<Token>;
+  User: ResolverTypeWrapper<User>;
+  Table: ResolverTypeWrapper<Table>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  TableConnection: ResolverTypeWrapper<TableConnection>;
+  AdditionalEntityFields: AdditionalEntityFields;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  Book: Book;
-  String: Scalars['String'];
   Query: {};
-  AdditionalEntityFields: AdditionalEntityFields;
+  ID: Scalars['ID'];
+  Int: Scalars['Int'];
+  Mutation: {};
+  String: Scalars['String'];
+  LoginInput: LoginInput;
+  RegisterInput: RegisterInput;
+  Token: Token;
+  User: User;
+  Table: Table;
   Boolean: Scalars['Boolean'];
+  TableConnection: TableConnection;
+  AdditionalEntityFields: AdditionalEntityFields;
 };
 
 export type UnionDirectiveArgs = {   discriminatorField?: Maybe<Scalars['String']>;
@@ -165,19 +245,52 @@ export type MapDirectiveArgs = {   path: Scalars['String']; };
 
 export type MapDirectiveResolver<Result, Parent, ContextType = any, Args = MapDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
-export type BookResolvers<ContextType = any, ParentType extends ResolversParentTypes['Book'] = ResolversParentTypes['Book']> = {
-  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  author?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
+  tables?: Resolver<ResolversTypes['TableConnection'], ParentType, ContextType, RequireFields<QueryTablesArgs, never>>;
+};
+
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  login?: Resolver<ResolversTypes['Token'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'args'>>;
+  register?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationRegisterArgs, 'args'>>;
+};
+
+export type TokenResolvers<ContextType = any, ParentType extends ResolversParentTypes['Token'] = ResolversParentTypes['Token']> = {
+  accessToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  refreshToken?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  books?: Resolver<Maybe<Array<Maybe<ResolversTypes['Book']>>>, ParentType, ContextType>;
+export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+  fullName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type TableResolvers<ContextType = any, ParentType extends ResolversParentTypes['Table'] = ResolversParentTypes['Table']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  limit?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  DeadLine?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  Fields?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  disabled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type TableConnectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['TableConnection'] = ResolversParentTypes['TableConnection']> = {
+  node?: Resolver<Array<ResolversTypes['Table']>, ParentType, ContextType>;
+  hasMore?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  cursor?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = any> = {
-  Book?: BookResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  Mutation?: MutationResolvers<ContextType>;
+  Token?: TokenResolvers<ContextType>;
+  User?: UserResolvers<ContextType>;
+  Table?: TableResolvers<ContextType>;
+  TableConnection?: TableConnectionResolvers<ContextType>;
 };
 
 

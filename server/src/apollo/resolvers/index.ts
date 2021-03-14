@@ -1,20 +1,10 @@
-import { Resolvers } from "../generated";
-
-const books = [
-  {
-    title: "The Awakening",
-    author: "Kate Chopin"
-  },
-  {
-    title: "City of Glass",
-    author: "Paul Auster"
-  }
-];
+import { Resolvers } from "../types/generated";
+import Mutation from "./Mutation";
+import Query from "./Query";
 
 const resolvers: Resolvers = {
-  Query: {
-    books: () => books
-  }
+  Query,
+  Mutation
 };
 
 export default resolvers;

@@ -1,8 +1,10 @@
 import { MongoDataSource } from "apollo-datasource-mongodb";
 import { ITableSchema } from "../models/Table";
 
-export default class Tables extends MongoDataSource<ITableSchema> {
-  getUser(userId: string) {
-    return this.findOneById(userId);
+class Table extends MongoDataSource<ITableSchema> {
+  getTable(id: string) {
+    return this.findOneById(id);
   }
 }
+
+export default Table;
