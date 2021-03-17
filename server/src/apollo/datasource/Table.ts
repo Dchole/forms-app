@@ -1,5 +1,5 @@
 import { MongoDataSource } from "apollo-datasource-mongodb";
-import { ITableSchema } from "../models/Table";
+import { ITableSchema } from "../../models/Table";
 
 class Table extends MongoDataSource<ITableSchema> {
   getTable(id: string) {

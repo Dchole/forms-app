@@ -1,14 +1,17 @@
-require("dotenv").config();
+import { config } from "dotenv";
 import { GraphQLFileLoader } from "@graphql-tools/graphql-file-loader";
 import { loadSchemaSync } from "@graphql-tools/load";
 import { addResolversToSchema } from "@graphql-tools/schema";
 import { ApolloServer } from "apollo-server";
 import { connect } from "mongoose";
 import resolvers from "./apollo/resolvers";
-import Table from "./datasource/Table";
-import User from "./datasource/User";
+import Table from "./apollo/datasource/Table";
+import User from "./apollo/datasource/User";
 import TableModel from "./models/Table";
 import UserModel from "./models/User";
+import currentUser from "./utils/currentUser";
+
+config();
 
 const schema = loadSchemaSync("src/apollo/schema.gql", {
   loaders: [new GraphQLFileLoader()]
@@ -39,9 +42,13 @@ const server = new ApolloServer({
     users: new User(UserModel),
     tables: new Table(TableModel)
   }),
-  context: ({ req }) => ({
-    token: req.headers.authorization?.split(" ")[1]
-  })
+  context: ({ req }) => {
+    const token = req.headers.authorization?.split(" ")[1] || "";
+
+    const userID = currentUser(token);
+
+    return { userID };
+  }
 });
 
 server.listen().then(({ url }) => {

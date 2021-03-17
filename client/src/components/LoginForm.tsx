@@ -71,6 +71,9 @@ const LoginForm = () => {
             color="primary"
             variant="contained"
             className={classes.button}
+            disabled={isSubmitting}
+            disableElevation={isSubmitting}
+            aria-busy={isSubmitting}
             fullWidth
           >
             {isSubmitting ? <CircularProgress size={25} /> : "Sign In"}

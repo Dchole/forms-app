@@ -5,7 +5,8 @@ type Query {
 
 type Mutation {
   login(args: LoginInput!): Token!
-  register(args: RegisterInput!): String!
+  register(args: RegisterInput!): User!
+  createTable(args: TableInput!): Table!
 }
 
 input LoginInput {
@@ -20,9 +21,20 @@ input RegisterInput {
   password: String!
 }
 
+input TableInput {
+  title: String!
+  fields: [String!]!
+}
+
 type Token {
   accessToken: String!
-  refreshToken: String
+  refreshToken: String!
+}
+
+type RegisterResult {
+  _id: ID!
+  fullName: String!
+  email: String!
 }
 
 type User {
@@ -31,7 +43,7 @@ type User {
 }
 
 type Table {
-  id: ID!
+  _id: ID!
   title: String!
   limit: Int
   DeadLine: String
