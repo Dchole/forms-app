@@ -23,13 +23,8 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
-  user: User;
+  currentUser: User;
   tables: TableConnection;
-};
-
-
-export type QueryUserArgs = {
-  id: Scalars['ID'];
 };
 
 
@@ -42,7 +37,10 @@ export type Mutation = {
   __typename?: 'Mutation';
   login: Token;
   register: User;
+  updateUser: User;
   createTable: Table;
+  deleteTable: Table;
+  disableTable: Scalars['Boolean'];
 };
 
 
@@ -56,8 +54,23 @@ export type MutationRegisterArgs = {
 };
 
 
+export type MutationUpdateUserArgs = {
+  args: UpdateInput;
+};
+
+
 export type MutationCreateTableArgs = {
   args: TableInput;
+};
+
+
+export type MutationDeleteTableArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDisableTableArgs = {
+  id: Scalars['ID'];
 };
 
 export type LoginInput = {
@@ -70,6 +83,13 @@ export type RegisterInput = {
   lastName: Scalars['String'];
   email: Scalars['String'];
   password: Scalars['String'];
+};
+
+export type UpdateInput = {
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  password?: Maybe<Scalars['String']>;
 };
 
 export type TableInput = {
@@ -98,11 +118,11 @@ export type User = {
 
 export type Table = {
   __typename?: 'Table';
-  id: Scalars['ID'];
+  _id: Scalars['ID'];
   title: Scalars['String'];
   limit?: Maybe<Scalars['Int']>;
-  DeadLine?: Maybe<Scalars['String']>;
-  Fields: Array<Scalars['String']>;
+  deadline?: Maybe<Scalars['String']>;
+  fields: Array<Scalars['String']>;
   disabled: Scalars['Boolean'];
 };
 
@@ -197,18 +217,19 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>;
-  ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   LoginInput: LoginInput;
   String: ResolverTypeWrapper<Scalars['String']>;
   RegisterInput: RegisterInput;
+  UpdateInput: UpdateInput;
   TableInput: TableInput;
   Token: ResolverTypeWrapper<Token>;
   RegisterResult: ResolverTypeWrapper<RegisterResult>;
   User: ResolverTypeWrapper<User>;
   Table: ResolverTypeWrapper<Table>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   TableConnection: ResolverTypeWrapper<TableConnection>;
   AdditionalEntityFields: AdditionalEntityFields;
 };
@@ -216,18 +237,19 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Query: {};
-  ID: Scalars['ID'];
   Int: Scalars['Int'];
   Mutation: {};
+  ID: Scalars['ID'];
+  Boolean: Scalars['Boolean'];
   LoginInput: LoginInput;
   String: Scalars['String'];
   RegisterInput: RegisterInput;
+  UpdateInput: UpdateInput;
   TableInput: TableInput;
   Token: Token;
   RegisterResult: RegisterResult;
   User: User;
   Table: Table;
-  Boolean: Scalars['Boolean'];
   TableConnection: TableConnection;
   AdditionalEntityFields: AdditionalEntityFields;
 };
@@ -268,14 +290,17 @@ export type MapDirectiveArgs = {   path: Scalars['String']; };
 export type MapDirectiveResolver<Result, Parent, ContextType = any, Args = MapDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
+  currentUser?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   tables?: Resolver<ResolversTypes['TableConnection'], ParentType, ContextType, RequireFields<QueryTablesArgs, never>>;
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   login?: Resolver<ResolversTypes['Token'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'args'>>;
   register?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationRegisterArgs, 'args'>>;
+  updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'args'>>;
   createTable?: Resolver<ResolversTypes['Table'], ParentType, ContextType, RequireFields<MutationCreateTableArgs, 'args'>>;
+  deleteTable?: Resolver<ResolversTypes['Table'], ParentType, ContextType, RequireFields<MutationDeleteTableArgs, 'id'>>;
+  disableTable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDisableTableArgs, 'id'>>;
 };
 
 export type TokenResolvers<ContextType = any, ParentType extends ResolversParentTypes['Token'] = ResolversParentTypes['Token']> = {
@@ -298,11 +323,11 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type TableResolvers<ContextType = any, ParentType extends ResolversParentTypes['Table'] = ResolversParentTypes['Table']> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   limit?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  DeadLine?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  Fields?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  deadline?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  fields?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   disabled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

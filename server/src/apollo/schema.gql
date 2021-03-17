@@ -1,12 +1,16 @@
 type Query {
-  user(id: ID!): User!
+  currentUser: User!
+  table(id: ID!): Table!
   tables(limit: Int, skip: Int): TableConnection!
 }
 
 type Mutation {
   login(args: LoginInput!): Token!
   register(args: RegisterInput!): User!
+  updateUser(args: UpdateInput!): User!
   createTable(args: TableInput!): Table!
+  deleteTable(id: ID!): Table!
+  disableTable(id: ID!): Boolean!
 }
 
 input LoginInput {
@@ -19,6 +23,13 @@ input RegisterInput {
   lastName: String!
   email: String!
   password: String!
+}
+
+input UpdateInput {
+  firstName: String
+  lastName: String
+  email: String
+  password: String
 }
 
 input TableInput {
@@ -46,8 +57,8 @@ type Table {
   _id: ID!
   title: String!
   limit: Int
-  DeadLine: String
-  Fields: [String!]!
+  deadline: String
+  fields: [String!]!
   disabled: Boolean!
 }
 
