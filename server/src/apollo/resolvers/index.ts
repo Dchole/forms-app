@@ -1,4 +1,4 @@
-import { Resolvers } from "../types/generated";
+import type { Resolvers } from "../types/generated";
 import Mutation from "./Mutation";
 import Query from "./Query";
 

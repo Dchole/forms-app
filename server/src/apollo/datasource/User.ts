@@ -1,8 +1,16 @@
 import { MongoDataSource } from "apollo-datasource-mongodb";
 import { IUserSchema } from "../../models/User";
+import type { Maybe } from "../types/generated";
 
 interface IContext {
   userID: string;
+}
+
+interface IUserInput {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
 }
 
 class User extends MongoDataSource<IUserSchema, IContext> {
@@ -12,14 +20,14 @@ class User extends MongoDataSource<IUserSchema, IContext> {
   }
 
   async getUser(email: string) {
-    return await this.model.findOne({ email });
+    return await this.model.findOne({ email }).select("-password");
   }
 
   async getUserForValidation(email: string) {
     return await this.model.findOne({ email }).select("password");
   }
 
-  async createUser(details: Record<string, string>) {
+  async createUser(details: IUserInput) {
     const { firstName, lastName, email, password } = details;
 
     return await this.model.create({
@@ -27,6 +35,26 @@ class User extends MongoDataSource<IUserSchema, IContext> {
       email,
       password
     });
+  }
+
+  async updateUser(details: Record<string, Maybe<string>>) {
+    const update: Record<string, string> = {};
+
+    Object.entries(details).map(([key, value]) => {
+      if (value) {
+        update[key] = value;
+      }
+    });
+
+    return await this.model
+      .findOneAndUpdate(
+        {
+          _id: this.context.userID
+        },
+        update,
+        { new: true }
+      )
+      .select("-password");
   }
 }
 

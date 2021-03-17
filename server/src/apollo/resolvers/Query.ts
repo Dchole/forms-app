@@ -1,6 +1,6 @@
 import { ApolloError } from "apollo-server-errors";
-import { TContext } from "../types/context";
-import { QueryResolvers } from "../types/generated";
+import type { TContext } from "../types/context";
+import type { QueryResolvers } from "../types/generated";
 
 const Query: QueryResolvers<TContext> = {
   currentUser: async (_root, _args, { dataSources: { users } }) => {

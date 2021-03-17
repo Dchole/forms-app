@@ -1,7 +1,7 @@
+import type { TContext } from "../types/context";
+import type { MutationResolvers } from "../types/generated";
 import { compare, genSalt, hash } from "bcryptjs";
-import { UserInputError } from "apollo-server-errors";
-import { TContext } from "../types/context";
-import { MutationResolvers } from "../types/generated";
+import { ApolloError, UserInputError } from "apollo-server-errors";
 import {
   createAccessToken,
   createRefreshToken
@@ -54,7 +54,24 @@ const Mutation: MutationResolvers<TContext> = {
       fullName: res.fullName,
       email: res.email
     };
+  },
+  updateUser: async (_root, { args }, { dataSources: { users } }) => {
+    const user = await users.updateUser(args);
+
+    if (!user) throw new ApolloError("Something went wrong!");
+
+    return {
+      email: user.email,
+      fullName: user.fullName
+    };
   }
+  // createTable: (
+  //   _root,
+  //   { args: { title, fields } },
+  //   { dataSources: { tables } }
+  // ) => {
+
+  // }
 };
 
 export default Mutation;

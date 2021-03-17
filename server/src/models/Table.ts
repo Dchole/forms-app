@@ -1,5 +1,4 @@
-import { Document } from "mongoose";
-import { model, Schema } from "mongoose";
+import { Document, model, Schema } from "mongoose";
 
 interface IFields {
   name: string;
