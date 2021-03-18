@@ -1,8 +1,9 @@
-import { Form, Formik } from "formik";
+import { Form, Formik, FormikErrors } from "formik";
 import { useState } from "react";
 import {
   handleSubmit,
   initialValues,
+  TValues,
   validationSchema
 } from "../../lib/register-config";
 import Step from "@material-ui/core/Step";
@@ -19,7 +20,17 @@ const MultiStepForm = () => {
   const classes = useMultiStepFormStyles();
   const [activeStep, setActiveStep] = useState(0);
 
-  const handleNextStep = () => activeStep < 2 && setActiveStep(activeStep + 1);
+  const handleNextStep = (
+    setFieldTouched: (field: string) => void,
+    errors: FormikErrors<TValues>
+  ) => {
+    const fields = ["firstName", "lastName"];
+    fields.forEach(field => setFieldTouched(field));
+
+    if (!Object.keys(errors).some(field => fields.includes(field))) {
+      activeStep < 2 && setActiveStep(activeStep + 1);
+    }
+  };
   const handlePrevStep = () => setActiveStep(activeStep - 1);
 
   return (
@@ -28,7 +39,7 @@ const MultiStepForm = () => {
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
     >
-      {({ isSubmitting }) => (
+      {({ isSubmitting, setFieldTouched, errors }) => (
         <Form>
           <Stepper
             activeStep={activeStep}
@@ -56,7 +67,7 @@ const MultiStepForm = () => {
               type={activeStep > 1 ? "submit" : undefined}
               color="primary"
               variant="contained"
-              onClick={handleNextStep}
+              onClick={() => handleNextStep(setFieldTouched, errors)}
               disabled={isSubmitting}
               disableElevation={isSubmitting}
               aria-busy={isSubmitting}
