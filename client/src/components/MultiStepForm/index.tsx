@@ -30,7 +30,11 @@ const MultiStepForm = () => {
     >
       {({ isSubmitting }) => (
         <Form>
-          <Stepper activeStep={activeStep} alternativeLabel>
+          <Stepper
+            activeStep={activeStep}
+            alternativeLabel
+            classes={{ root: classes.stepper }}
+          >
             {steps.map(label => (
               <Step key={label}>
                 <StepLabel>{label}</StepLabel>

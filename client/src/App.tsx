@@ -1,5 +1,5 @@
 import "@fontsource/roboto";
-import "@fontsource/montserrat/600.css";
+import "@fontsource/nunito-sans/600.css";
 
 import { lazy, Suspense } from "react";
 import { Route, Switch } from "react-router-dom";

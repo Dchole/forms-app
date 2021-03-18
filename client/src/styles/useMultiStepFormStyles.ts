@@ -2,6 +2,9 @@ import { makeStyles, createStyles } from "@material-ui/core/styles";
 
 const useMultiStepFormStyles = makeStyles(theme =>
   createStyles({
+    stepper: {
+      padding: theme.spacing(0, 3, 3)
+    },
     actions: {
       display: "flex",
       justifyContent: "space-between",
