@@ -50,10 +50,10 @@ const StepContent: React.FC<IStepContentProps> = ({ step }) => {
         type="email"
         name="email"
         label="Email"
-        margin="normal"
         variant="outlined"
         autoComplete="email"
         aria-required
+        autoFocus
         fullWidth
       />
       <Field

@@ -1206,6 +1206,11 @@
   resolved "https://registry.yarnpkg.com/@fontsource/montserrat/-/montserrat-4.2.2.tgz#a1ad54b9302d6b840618fa1294fb4aec98e2b673"
   integrity sha512-HnlV9Xim2mYa56Bz/UIO5r26Rq/DJWlYdMWTql+TE6n3yYMe8YV6dTwPzTbkr35IsyDq6cWy0rPert9MWyA2yA==
 
+"@fontsource/nunito-sans@^4.2.2":
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/@fontsource/nunito-sans/-/nunito-sans-4.2.2.tgz#0f5d16a2c15cc3638be5a8d9d8f021ad0e1b1f24"
+  integrity sha512-ZJZOjz5kFkljzCS17240fKwg4VqNcYbaPcVn0/rD6qJoC34SXH/11CY+gbrmEPDhZlf0teQ6Q9j1e35yzWIYpg==
+
 "@fontsource/roboto@^4.2.2":
   version "4.2.2"
   resolved "https://registry.yarnpkg.com/@fontsource/roboto/-/roboto-4.2.2.tgz#39b87680b25915539e445cc6e0fac99e1a81f58b"

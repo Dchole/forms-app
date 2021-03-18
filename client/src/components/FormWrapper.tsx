@@ -15,6 +15,7 @@ const FormWrapper: React.FC = ({ children }) => {
   const { breakpoints } = useTheme();
   const classes = useFormStyles();
   const mobile = useMediaQuery(breakpoints.down("xs"));
+  const desktop = useMediaQuery(breakpoints.up("sm"));
   const onLoginPage = pathname === "/login";
 
   return (
@@ -24,7 +25,7 @@ const FormWrapper: React.FC = ({ children }) => {
       disableGutters={mobile}
     >
       <Paper component="main">
-        {!mobile && (
+        {desktop && (
           <Avatar>
             <LockIcon />
           </Avatar>
