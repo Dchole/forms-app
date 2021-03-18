@@ -1,4 +1,6 @@
 import { useLocation, Link as RouterLink } from "react-router-dom";
+import { useTheme } from "@material-ui/core/styles";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import Paper from "@material-ui/core/Paper";
@@ -9,17 +11,25 @@ import LockIcon from "@material-ui/icons/LockOutlined";
 import useFormStyles from "../styles/useFormStyles";
 
 const FormWrapper: React.FC = ({ children }) => {
-  const classes = useFormStyles();
   const { pathname } = useLocation();
+  const { breakpoints } = useTheme();
+  const classes = useFormStyles();
+  const mobile = useMediaQuery(breakpoints.down("xs"));
   const onLoginPage = pathname === "/login";
 
   return (
-    <Container maxWidth="xs" classes={{ root: classes.root }}>
+    <Container
+      maxWidth="xs"
+      classes={{ root: classes.root }}
+      disableGutters={mobile}
+    >
       <Paper component="main">
-        <Avatar>
-          <LockIcon />
-        </Avatar>
-        <Typography variant="h5" component="h1" align="center" gutterBottom>
+        {!mobile && (
+          <Avatar>
+            <LockIcon />
+          </Avatar>
+        )}
+        <Typography variant="h4" component="h1" align="center" gutterBottom>
           {onLoginPage ? "Sign In" : "Sign Up"}
         </Typography>
         {children}

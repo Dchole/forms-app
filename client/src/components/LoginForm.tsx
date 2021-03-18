@@ -27,45 +27,43 @@ const LoginForm = () => {
       onSubmit={handleSubmit}
     >
       {({ isSubmitting }) => (
-        <>
-          <Form>
-            <Field
-              component={TextField}
-              id="email"
-              name="email"
-              label="Email"
-              variant="outlined"
-              autoComplete="email"
-              aria-required
-              fullWidth
-            />
-            <Field
-              component={TextField}
-              id="password"
-              type={showPassword ? "text" : "password"}
-              name="password"
-              label="Password"
-              margin="normal"
-              variant="outlined"
-              autoComplete="current-password"
-              aria-required
-              fullWidth
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label={
-                        showPassword ? "hide password" : "show password"
-                      }
-                      onClick={handleToggle}
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                )
-              }}
-            />
-          </Form>
+        <Form>
+          <Field
+            component={TextField}
+            id="email"
+            name="email"
+            label="Email"
+            variant="outlined"
+            autoComplete="email"
+            aria-required
+            fullWidth
+          />
+          <Field
+            component={TextField}
+            id="password"
+            type={showPassword ? "text" : "password"}
+            name="password"
+            label="Password"
+            margin="normal"
+            variant="outlined"
+            autoComplete="current-password"
+            aria-required
+            fullWidth
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label={
+                      showPassword ? "hide password" : "show password"
+                    }
+                    onClick={handleToggle}
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
+          />
           <Button
             type="submit"
             color="primary"
@@ -78,7 +76,7 @@ const LoginForm = () => {
           >
             {isSubmitting ? <CircularProgress size={25} /> : "Sign In"}
           </Button>
-        </>
+        </Form>
       )}
     </Formik>
   );

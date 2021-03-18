@@ -6,9 +6,11 @@ const PageLoader = () => {
   const [showLoader, setShowLoader] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => {
+    const timerID = setTimeout(() => {
       setShowLoader(true);
     }, 2000);
+
+    return () => clearTimeout(timerID);
   }, []);
 
   return (

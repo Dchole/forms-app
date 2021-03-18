@@ -28,84 +28,82 @@ const RegisterForm = () => {
       onSubmit={handleSubmit}
     >
       {({ isSubmitting }) => (
-        <>
-          <Form>
-            <Field
-              component={TextField}
-              id="firstName"
-              name="firstName"
-              label="First Name"
-              variant="outlined"
-              autoComplete="given-name"
-              autoCapitalize="on"
-              autoFocus
-              aria-required
-              fullWidth
-            />
-            <Field
-              component={TextField}
-              id="lastName"
-              name="lastName"
-              label="Last Name"
-              margin="normal"
-              variant="outlined"
-              autoComplete="family-name"
-              autoCapitalize="on"
-              aria-required
-              fullWidth
-            />
-            <Field
-              component={TextField}
-              id="email"
-              type="email"
-              name="email"
-              label="Email"
-              margin="normal"
-              variant="outlined"
-              autoComplete="email"
-              aria-required
-              fullWidth
-            />
-            <Field
-              component={TextField}
-              id="password"
-              type={showPassword ? "text" : "password"}
-              name="password"
-              label="Password"
-              margin="normal"
-              variant="outlined"
-              autoComplete="new-password"
-              aria-required
-              fullWidth
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label={
-                        showPassword ? "hide password" : "show password"
-                      }
-                      onClick={handleToggle}
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                )
-              }}
-            />
-            <Button
-              type="submit"
-              color="primary"
-              variant="contained"
-              className={classes.button}
-              disabled={isSubmitting}
-              disableElevation={isSubmitting}
-              aria-busy={isSubmitting}
-              fullWidth
-            >
-              {isSubmitting ? <CircularProgress size={25} /> : "Sign Up"}
-            </Button>
-          </Form>
-        </>
+        <Form>
+          <Field
+            component={TextField}
+            id="firstName"
+            name="firstName"
+            label="First Name"
+            variant="outlined"
+            autoComplete="given-name"
+            autoCapitalize="on"
+            autoFocus
+            aria-required
+            fullWidth
+          />
+          <Field
+            component={TextField}
+            id="lastName"
+            name="lastName"
+            label="Last Name"
+            margin="normal"
+            variant="outlined"
+            autoComplete="family-name"
+            autoCapitalize="on"
+            aria-required
+            fullWidth
+          />
+          <Field
+            component={TextField}
+            id="email"
+            type="email"
+            name="email"
+            label="Email"
+            margin="normal"
+            variant="outlined"
+            autoComplete="email"
+            aria-required
+            fullWidth
+          />
+          <Field
+            component={TextField}
+            id="password"
+            type={showPassword ? "text" : "password"}
+            name="password"
+            label="Password"
+            margin="normal"
+            variant="outlined"
+            autoComplete="new-password"
+            aria-required
+            fullWidth
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label={
+                      showPassword ? "hide password" : "show password"
+                    }
+                    onClick={handleToggle}
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
+          />
+          <Button
+            type="submit"
+            color="primary"
+            variant="contained"
+            className={classes.button}
+            disabled={isSubmitting}
+            disableElevation={isSubmitting}
+            aria-busy={isSubmitting}
+            fullWidth
+          >
+            {isSubmitting ? <CircularProgress size={25} /> : "Sign Up"}
+          </Button>
+        </Form>
       )}
     </Formik>
   );
