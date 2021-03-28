@@ -3,7 +3,6 @@ import "@fontsource/nunito-sans/600.css";
 
 import { lazy, Suspense } from "react";
 import { Route, Switch } from "react-router-dom";
-// @ts-ignore
 import { withQuicklink } from "quicklink/dist/react/hoc.js";
 import Homepage from "./pages/Homepage";
 import PageLoader from "./components/PageLoader";

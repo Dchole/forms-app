@@ -1,6 +1,11 @@
 import { createMuiTheme } from "@material-ui/core/styles";
 
 const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: "#0F9D58"
+    }
+  },
   typography: {
     h1: {
       fontFamily: `"Nunito Sans", Tahoma, sans-serif`
