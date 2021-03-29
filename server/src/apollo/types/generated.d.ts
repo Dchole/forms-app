@@ -37,6 +37,7 @@ export type QueryTableArgs = {
 export type QueryTablesArgs = {
   limit?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
+  filter?: Maybe<TableFilterInput>;
 };
 
 export type Mutation = {
@@ -84,7 +85,7 @@ export type MutationEditRowArgs = {
 
 
 export type MutationDeleteRowArgs = {
-  rowID: Scalars['String'];
+  args: DeleteRowInput;
 };
 
 
@@ -95,6 +96,11 @@ export type MutationDeleteTableArgs = {
 
 export type MutationDisableTableArgs = {
   id: Scalars['ID'];
+};
+
+export type TableFilterInput = {
+  key: Scalars['String'];
+  value: Scalars['String'];
 };
 
 export type LoginInput = {
@@ -125,13 +131,21 @@ export type TableInput = {
 };
 
 export type AddRowInput = {
+  tableID: Scalars['ID'];
   fullName?: Maybe<Scalars['String']>;
   data: Array<Scalars['String']>;
 };
 
 export type EditRowInput = {
+  tableID: Scalars['ID'];
   rowID: Scalars['ID'];
+  fullName?: Maybe<Scalars['String']>;
   data: Array<Scalars['String']>;
+};
+
+export type DeleteRowInput = {
+  tableID: Scalars['ID'];
+  rowID: Scalars['ID'];
 };
 
 export type Token = {
@@ -275,14 +289,16 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
-  String: ResolverTypeWrapper<Scalars['String']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  TableFilterInput: TableFilterInput;
+  String: ResolverTypeWrapper<Scalars['String']>;
   LoginInput: LoginInput;
   RegisterInput: RegisterInput;
   UpdateInput: UpdateInput;
   TableInput: TableInput;
   AddRowInput: AddRowInput;
   EditRowInput: EditRowInput;
+  DeleteRowInput: DeleteRowInput;
   Token: ResolverTypeWrapper<Token>;
   FieldInput: FieldInput;
   RegisterResult: ResolverTypeWrapper<RegisterResult>;
@@ -300,14 +316,16 @@ export type ResolversParentTypes = {
   ID: Scalars['ID'];
   Int: Scalars['Int'];
   Mutation: {};
-  String: Scalars['String'];
   Boolean: Scalars['Boolean'];
+  TableFilterInput: TableFilterInput;
+  String: Scalars['String'];
   LoginInput: LoginInput;
   RegisterInput: RegisterInput;
   UpdateInput: UpdateInput;
   TableInput: TableInput;
   AddRowInput: AddRowInput;
   EditRowInput: EditRowInput;
+  DeleteRowInput: DeleteRowInput;
   Token: Token;
   FieldInput: FieldInput;
   RegisterResult: RegisterResult;
@@ -367,7 +385,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createTable?: Resolver<ResolversTypes['Table'], ParentType, ContextType, RequireFields<MutationCreateTableArgs, 'args'>>;
   addRow?: Resolver<ResolversTypes['Row'], ParentType, ContextType, RequireFields<MutationAddRowArgs, 'args'>>;
   editRow?: Resolver<ResolversTypes['Row'], ParentType, ContextType, RequireFields<MutationEditRowArgs, 'args'>>;
-  deleteRow?: Resolver<ResolversTypes['Row'], ParentType, ContextType, RequireFields<MutationDeleteRowArgs, 'rowID'>>;
+  deleteRow?: Resolver<ResolversTypes['Row'], ParentType, ContextType, RequireFields<MutationDeleteRowArgs, 'args'>>;
   deleteTable?: Resolver<ResolversTypes['Table'], ParentType, ContextType, RequireFields<MutationDeleteTableArgs, 'id'>>;
   disableTable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDisableTableArgs, 'id'>>;
 };

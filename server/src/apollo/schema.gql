@@ -11,7 +11,7 @@ type Mutation {
   createTable(args: TableInput!): Table!
   addRow(args: AddRowInput!): Row!
   editRow(args: EditRowInput!): Row!
-  deleteRow(rowID: String!): Row!
+  deleteRow(args: DeleteRowInput!): Row!
   deleteTable(id: ID!): Table!
   disableTable(id: ID!): Boolean!
 }
@@ -49,13 +49,21 @@ input TableInput {
 }
 
 input AddRowInput {
+  tableID: ID!
   fullName: String
   data: [String!]!
 }
 
 input EditRowInput {
+  tableID: ID!
   rowID: ID!
+  fullName: String
   data: [String!]!
+}
+
+input DeleteRowInput {
+  tableID: ID!
+  rowID: ID!
 }
 
 type Token {

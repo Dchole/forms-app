@@ -1,12 +1,12 @@
 import { Document, model, Schema } from "mongoose";
 
-interface IFields {
+interface IFields extends Document {
   name: string;
   type: string;
 }
 
-interface IRow {
-  fullName: string;
+interface IRow extends Document {
+  fullName?: string;
   data: string[];
 }
 
