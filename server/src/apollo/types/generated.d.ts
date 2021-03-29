@@ -24,7 +24,13 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   currentUser: User;
+  table: Table;
   tables: TableConnection;
+};
+
+
+export type QueryTableArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -39,6 +45,9 @@ export type Mutation = {
   register: User;
   updateUser: User;
   createTable: Table;
+  addRow: Row;
+  editRow: Row;
+  deleteRow: Row;
   deleteTable: Table;
   disableTable: Scalars['Boolean'];
 };
@@ -61,6 +70,21 @@ export type MutationUpdateUserArgs = {
 
 export type MutationCreateTableArgs = {
   args: TableInput;
+};
+
+
+export type MutationAddRowArgs = {
+  args: AddRowInput;
+};
+
+
+export type MutationEditRowArgs = {
+  args: EditRowInput;
+};
+
+
+export type MutationDeleteRowArgs = {
+  rowID: Scalars['String'];
 };
 
 
@@ -94,13 +118,31 @@ export type UpdateInput = {
 
 export type TableInput = {
   title: Scalars['String'];
-  fields: Array<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+  deadline?: Maybe<Scalars['String']>;
+  disabled?: Maybe<Scalars['Boolean']>;
+  fields: Array<FieldInput>;
+};
+
+export type AddRowInput = {
+  fullName?: Maybe<Scalars['String']>;
+  data: Array<Scalars['String']>;
+};
+
+export type EditRowInput = {
+  rowID: Scalars['ID'];
+  data: Array<Scalars['String']>;
 };
 
 export type Token = {
   __typename?: 'Token';
   accessToken: Scalars['String'];
   refreshToken: Scalars['String'];
+};
+
+export type FieldInput = {
+  name: Scalars['String'];
+  type?: Maybe<Scalars['String']>;
 };
 
 export type RegisterResult = {
@@ -122,8 +164,21 @@ export type Table = {
   title: Scalars['String'];
   limit?: Maybe<Scalars['Int']>;
   deadline?: Maybe<Scalars['String']>;
-  fields: Array<Scalars['String']>;
+  fields: Array<Field>;
+  rows: Array<Row>;
   disabled: Scalars['Boolean'];
+};
+
+export type Field = {
+  __typename?: 'Field';
+  name: Scalars['String'];
+  type: Scalars['String'];
+};
+
+export type Row = {
+  __typename?: 'Row';
+  fullName?: Maybe<Scalars['String']>;
+  data: Array<Scalars['String']>;
 };
 
 export type TableConnection = {
@@ -217,19 +272,24 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
-  ID: ResolverTypeWrapper<Scalars['ID']>;
+  String: ResolverTypeWrapper<Scalars['String']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   LoginInput: LoginInput;
-  String: ResolverTypeWrapper<Scalars['String']>;
   RegisterInput: RegisterInput;
   UpdateInput: UpdateInput;
   TableInput: TableInput;
+  AddRowInput: AddRowInput;
+  EditRowInput: EditRowInput;
   Token: ResolverTypeWrapper<Token>;
+  FieldInput: FieldInput;
   RegisterResult: ResolverTypeWrapper<RegisterResult>;
   User: ResolverTypeWrapper<User>;
   Table: ResolverTypeWrapper<Table>;
+  Field: ResolverTypeWrapper<Field>;
+  Row: ResolverTypeWrapper<Row>;
   TableConnection: ResolverTypeWrapper<TableConnection>;
   AdditionalEntityFields: AdditionalEntityFields;
 };
@@ -237,19 +297,24 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Query: {};
+  ID: Scalars['ID'];
   Int: Scalars['Int'];
   Mutation: {};
-  ID: Scalars['ID'];
+  String: Scalars['String'];
   Boolean: Scalars['Boolean'];
   LoginInput: LoginInput;
-  String: Scalars['String'];
   RegisterInput: RegisterInput;
   UpdateInput: UpdateInput;
   TableInput: TableInput;
+  AddRowInput: AddRowInput;
+  EditRowInput: EditRowInput;
   Token: Token;
+  FieldInput: FieldInput;
   RegisterResult: RegisterResult;
   User: User;
   Table: Table;
+  Field: Field;
+  Row: Row;
   TableConnection: TableConnection;
   AdditionalEntityFields: AdditionalEntityFields;
 };
@@ -291,6 +356,7 @@ export type MapDirectiveResolver<Result, Parent, ContextType = any, Args = MapDi
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   currentUser?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  table?: Resolver<ResolversTypes['Table'], ParentType, ContextType, RequireFields<QueryTableArgs, 'id'>>;
   tables?: Resolver<ResolversTypes['TableConnection'], ParentType, ContextType, RequireFields<QueryTablesArgs, never>>;
 };
 
@@ -299,6 +365,9 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   register?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationRegisterArgs, 'args'>>;
   updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'args'>>;
   createTable?: Resolver<ResolversTypes['Table'], ParentType, ContextType, RequireFields<MutationCreateTableArgs, 'args'>>;
+  addRow?: Resolver<ResolversTypes['Row'], ParentType, ContextType, RequireFields<MutationAddRowArgs, 'args'>>;
+  editRow?: Resolver<ResolversTypes['Row'], ParentType, ContextType, RequireFields<MutationEditRowArgs, 'args'>>;
+  deleteRow?: Resolver<ResolversTypes['Row'], ParentType, ContextType, RequireFields<MutationDeleteRowArgs, 'rowID'>>;
   deleteTable?: Resolver<ResolversTypes['Table'], ParentType, ContextType, RequireFields<MutationDeleteTableArgs, 'id'>>;
   disableTable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDisableTableArgs, 'id'>>;
 };
@@ -327,8 +396,21 @@ export type TableResolvers<ContextType = any, ParentType extends ResolversParent
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   limit?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   deadline?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  fields?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  fields?: Resolver<Array<ResolversTypes['Field']>, ParentType, ContextType>;
+  rows?: Resolver<Array<ResolversTypes['Row']>, ParentType, ContextType>;
   disabled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type FieldResolvers<ContextType = any, ParentType extends ResolversParentTypes['Field'] = ResolversParentTypes['Field']> = {
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type RowResolvers<ContextType = any, ParentType extends ResolversParentTypes['Row'] = ResolversParentTypes['Row']> = {
+  fullName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  data?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -346,6 +428,8 @@ export type Resolvers<ContextType = any> = {
   RegisterResult?: RegisterResultResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   Table?: TableResolvers<ContextType>;
+  Field?: FieldResolvers<ContextType>;
+  Row?: RowResolvers<ContextType>;
   TableConnection?: TableConnectionResolvers<ContextType>;
 };
 

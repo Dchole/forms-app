@@ -1,7 +1,7 @@
 type Query {
   currentUser: User!
   table(id: ID!): Table!
-  tables(limit: Int, skip: Int): TableConnection!
+  tables(limit: Int, skip: Int, filter: TableFilterInput): TableConnection!
 }
 
 type Mutation {
@@ -9,8 +9,16 @@ type Mutation {
   register(args: RegisterInput!): User!
   updateUser(args: UpdateInput!): User!
   createTable(args: TableInput!): Table!
+  addRow(args: AddRowInput!): Row!
+  editRow(args: EditRowInput!): Row!
+  deleteRow(rowID: String!): Row!
   deleteTable(id: ID!): Table!
   disableTable(id: ID!): Boolean!
+}
+
+input TableFilterInput {
+  key: String!
+  value: String!
 }
 
 input LoginInput {
@@ -34,12 +42,30 @@ input UpdateInput {
 
 input TableInput {
   title: String!
-  fields: [String!]!
+  limit: Int
+  deadline: String
+  disabled: Boolean
+  fields: [FieldInput!]!
+}
+
+input AddRowInput {
+  fullName: String
+  data: [String!]!
+}
+
+input EditRowInput {
+  rowID: ID!
+  data: [String!]!
 }
 
 type Token {
   accessToken: String!
   refreshToken: String!
+}
+
+input FieldInput {
+  name: String!
+  type: String
 }
 
 type RegisterResult {
@@ -58,8 +84,19 @@ type Table {
   title: String!
   limit: Int
   deadline: String
-  fields: [String!]!
+  fields: [Field!]!
+  rows: [Row!]!
   disabled: Boolean!
+}
+
+type Field {
+  name: String!
+  type: String!
+}
+
+type Row {
+  fullName: String
+  data: [String!]!
 }
 
 type TableConnection {

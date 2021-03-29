@@ -20,17 +20,17 @@ class User extends MongoDataSource<IUserSchema, IContext> {
   }
 
   async getUser(email: string) {
-    return await this.model.findOne({ email }).select("-password");
+    return this.model.findOne({ email }).select("-password");
   }
 
   async getUserForValidation(email: string) {
-    return await this.model.findOne({ email }).select("password");
+    return this.model.findOne({ email }).select("password");
   }
 
   async createUser(details: IUserInput) {
     const { firstName, lastName, email, password } = details;
 
-    return await this.model.create({
+    return this.model.create({
       fullName: `${firstName} ${lastName}`,
       email,
       password
@@ -46,7 +46,7 @@ class User extends MongoDataSource<IUserSchema, IContext> {
       }
     });
 
-    return await this.model
+    return this.model
       .findOneAndUpdate(
         {
           _id: this.context.userID

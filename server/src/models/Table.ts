@@ -2,7 +2,12 @@ import { Document, model, Schema } from "mongoose";
 
 interface IFields {
   name: string;
-  rules?: string[];
+  type: string;
+}
+
+interface IRow {
+  fullName: string;
+  data: string[];
 }
 
 export interface ITableSchema extends Document {
@@ -11,6 +16,8 @@ export interface ITableSchema extends Document {
   deadline?: string;
   disabled: boolean;
   fields: IFields[];
+  rows: IRow[];
+  admin: string;
 }
 
 const TableSchema = new Schema(
@@ -32,14 +39,32 @@ const TableSchema = new Schema(
     fields: [
       {
         name: String,
-        rules: [
-          {
-            type: Schema.Types.ObjectId,
-            ref: "Rules"
-          }
-        ]
+        type: {
+          type: String,
+          enum: [
+            "text",
+            "long text",
+            "boolean",
+            "single choice",
+            "multiple choice"
+          ],
+          default: "text"
+        }
       }
-    ]
+    ],
+    rows: [
+      {
+        fullName: String,
+        data: {
+          type: Schema.Types.Array,
+          required: true
+        }
+      }
+    ],
+    admin: {
+      type: Schema.Types.ObjectId,
+      ref: "Users"
+    }
   },
   { timestamps: true }
 );
