@@ -44,53 +44,28 @@ const Mutation: MutationResolvers<TContext> = {
     const salt = await genSalt(10);
     const hashedPassword = await hash(password, salt);
 
-    const res = await users.createUser({
+    return users.createUser({
       email,
       password: hashedPassword,
       ...name
     });
-
-    return {
-      fullName: res.fullName,
-      email: res.email
-    };
   },
   updateUser: async (_root, { args }, { dataSources: { users } }) => {
-    const user = await users.updateUser(args);
-
-    if (!user) throw new Error("Something went wrong!");
-
-    return {
-      email: user.email,
-      fullName: user.fullName
-    };
+    return users.updateUser(args);
   },
   createTable: async (_root, { args }, { dataSources: { tables }, userID }) => {
-    const newTable = await tables.createTable({ ...args, admin: userID });
+    return tables.createTable({ ...args, admin: userID });
+  },
+  deleteTable: async (_root, { id }, { dataSources: { tables } }) => {
+    const deleted = await tables.deleteTable(id);
 
-    if (!newTable) throw new Error("Something went wrong!");
-
-    const {
-      _id,
-      title,
-      fields,
-      rows,
-      disabled,
-      deadline,
-      limit,
-      admin
-    } = newTable;
-
-    return {
-      _id,
-      title,
-      fields,
-      rows,
-      disabled,
-      deadline,
-      limit,
-      admin
-    };
+    return Boolean(deleted);
+  },
+  addRow: async (_root, { args }, { dataSources: { tables } }) => {
+    return tables.addRow(args);
+  },
+  editRow: async (_root, { args }, { dataSources: { tables } }) => {
+    return tables.editRow(args);
   }
 };
 

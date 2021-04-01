@@ -1,11 +1,11 @@
 import { Document, model, Schema } from "mongoose";
 
-interface IFields extends Document {
+export interface IField extends Document {
   name: string;
   type: string;
 }
 
-interface IRow extends Document {
+export interface IRow extends Document {
   fullName?: string;
   data: string[];
 }
@@ -15,7 +15,7 @@ export interface ITableSchema extends Document {
   limit?: number;
   deadline?: string;
   disabled: boolean;
-  fields: IFields[];
+  fields: IField[];
   rows: IRow[];
   admin: string;
 }

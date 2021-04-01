@@ -46,7 +46,7 @@ class User extends MongoDataSource<IUserSchema, IContext> {
       }
     });
 
-    return this.model
+    const updatedUser = await this.model
       .findOneAndUpdate(
         {
           _id: this.context.userID
@@ -55,6 +55,10 @@ class User extends MongoDataSource<IUserSchema, IContext> {
         { new: true }
       )
       .select("-password");
+
+    if (!updatedUser) throw new Error("Something went wrong");
+
+    return updatedUser;
   }
 }
 

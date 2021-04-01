@@ -11,9 +11,9 @@ type Mutation {
   createTable(args: TableInput!): Table!
   addRow(args: AddRowInput!): Row!
   editRow(args: EditRowInput!): Row!
-  deleteRow(args: DeleteRowInput!): Row!
-  deleteTable(id: ID!): Table!
-  disableTable(id: ID!): Boolean!
+  deleteRow(args: DeleteRowInput!): Boolean!
+  deleteTable(id: ID!): Boolean!
+  toggleDisableTable(id: ID!): Boolean!
 }
 
 input TableFilterInput {
@@ -83,6 +83,7 @@ type RegisterResult {
 }
 
 type User {
+  _id: ID
   fullName: String!
   email: String!
 }
@@ -98,11 +99,13 @@ type Table {
 }
 
 type Field {
+  _id: ID
   name: String!
   type: String!
 }
 
 type Row {
+  _id: ID
   fullName: String
   data: [String!]!
 }
