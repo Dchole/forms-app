@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
@@ -11,6 +11,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  List: any;
 };
 
 
@@ -48,7 +49,7 @@ export type Mutation = {
   createTable: Table;
   addRow: Row;
   editRow: Row;
-  deleteRow: Scalars['Boolean'];
+  deleteRow: Row;
   deleteTable: Scalars['Boolean'];
   toggleDisableTable: Scalars['Boolean'];
 };
@@ -156,7 +157,7 @@ export type Token = {
 
 export type FieldInput = {
   name: Scalars['String'];
-  type?: Maybe<Scalars['String']>;
+  type?: Maybe<EFields>;
 };
 
 export type RegisterResult = {
@@ -198,12 +199,22 @@ export type Row = {
   data: Array<Scalars['String']>;
 };
 
+
 export type TableConnection = {
   __typename?: 'TableConnection';
   node: Array<Table>;
   hasMore: Scalars['Boolean'];
   cursor: Scalars['ID'];
 };
+
+export enum EFields {
+  Text = 'TEXT',
+  LongText = 'LONG_TEXT',
+  Number = 'NUMBER',
+  Boolean = 'BOOLEAN',
+  SingleChoice = 'SINGLE_CHOICE',
+  MultipleSelect = 'MULTIPLE_SELECT'
+}
 
 export type AdditionalEntityFields = {
   path?: Maybe<Scalars['String']>;
@@ -309,7 +320,9 @@ export type ResolversTypes = {
   Table: ResolverTypeWrapper<Table>;
   Field: ResolverTypeWrapper<Field>;
   Row: ResolverTypeWrapper<Row>;
+  List: ResolverTypeWrapper<Scalars['List']>;
   TableConnection: ResolverTypeWrapper<TableConnection>;
+  EFields: EFields;
   AdditionalEntityFields: AdditionalEntityFields;
 };
 
@@ -336,6 +349,7 @@ export type ResolversParentTypes = {
   Table: Table;
   Field: Field;
   Row: Row;
+  List: Scalars['List'];
   TableConnection: TableConnection;
   AdditionalEntityFields: AdditionalEntityFields;
 };
@@ -388,7 +402,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createTable?: Resolver<ResolversTypes['Table'], ParentType, ContextType, RequireFields<MutationCreateTableArgs, 'args'>>;
   addRow?: Resolver<ResolversTypes['Row'], ParentType, ContextType, RequireFields<MutationAddRowArgs, 'args'>>;
   editRow?: Resolver<ResolversTypes['Row'], ParentType, ContextType, RequireFields<MutationEditRowArgs, 'args'>>;
-  deleteRow?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteRowArgs, 'args'>>;
+  deleteRow?: Resolver<ResolversTypes['Row'], ParentType, ContextType, RequireFields<MutationDeleteRowArgs, 'args'>>;
   deleteTable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteTableArgs, 'id'>>;
   toggleDisableTable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationToggleDisableTableArgs, 'id'>>;
 };
@@ -438,6 +452,10 @@ export type RowResolvers<ContextType = any, ParentType extends ResolversParentTy
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export interface ListScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['List'], any> {
+  name: 'List';
+}
+
 export type TableConnectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['TableConnection'] = ResolversParentTypes['TableConnection']> = {
   node?: Resolver<Array<ResolversTypes['Table']>, ParentType, ContextType>;
   hasMore?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -454,6 +472,7 @@ export type Resolvers<ContextType = any> = {
   Table?: TableResolvers<ContextType>;
   Field?: FieldResolvers<ContextType>;
   Row?: RowResolvers<ContextType>;
+  List?: GraphQLScalarType;
   TableConnection?: TableConnectionResolvers<ContextType>;
 };
 

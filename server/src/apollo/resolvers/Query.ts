@@ -13,17 +13,18 @@ const Query: QueryResolvers<TContext> = {
       fullName: user.fullName
     };
   },
-  // @ts-ignore
   tables: async (_root, { limit, skip }, { dataSources: { tables } }) => {
-    // @ts-ignore
-    const allTables = await tables.getTables(limit, skip);
+    const allTables = await tables.getTables(
+      limit as number | undefined,
+      skip as number | undefined
+    );
 
     if (!allTables) throw new ApolloError("Something went wrong");
 
     return {
       node: allTables,
       hasMore: false, // For now,
-      cursor: allTables[length - 1]._id
+      cursor: allTables[allTables.length - 1]._id // For now
     };
   }
 };

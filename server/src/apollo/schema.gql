@@ -11,7 +11,7 @@ type Mutation {
   createTable(args: TableInput!): Table!
   addRow(args: AddRowInput!): Row!
   editRow(args: EditRowInput!): Row!
-  deleteRow(args: DeleteRowInput!): Boolean!
+  deleteRow(args: DeleteRowInput!): Row!
   deleteTable(id: ID!): Boolean!
   toggleDisableTable(id: ID!): Boolean!
 }
@@ -73,7 +73,7 @@ type Token {
 
 input FieldInput {
   name: String!
-  type: String
+  type: EFields
 }
 
 type RegisterResult {
@@ -110,8 +110,19 @@ type Row {
   data: [String!]!
 }
 
+scalar List
+
 type TableConnection {
   node: [Table!]!
   hasMore: Boolean!
   cursor: ID!
+}
+
+enum EFields {
+  TEXT
+  LONG_TEXT
+  NUMBER
+  BOOLEAN
+  SINGLE_CHOICE
+  MULTIPLE_SELECT
 }

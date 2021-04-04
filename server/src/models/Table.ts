@@ -1,8 +1,16 @@
 import { Document, model, Schema } from "mongoose";
 
+type EFieldType =
+  | "TEXT"
+  | "LONG_TEXT"
+  | "NUMBER"
+  | "BOOLEAN"
+  | "SINGLE_CHOICE"
+  | "MULTIPLE_SELECT";
+
 export interface IField extends Document {
   name: string;
-  type: string;
+  type: EFieldType;
 }
 
 export interface IRow extends Document {
@@ -42,13 +50,14 @@ const TableSchema = new Schema(
         type: {
           type: String,
           enum: [
-            "text",
-            "long text",
-            "boolean",
-            "single choice",
-            "multiple choice"
+            "TEXT",
+            "LONG_TEXT",
+            "NUMBER",
+            "BOOLEAN",
+            "SINGLE_CHOICE",
+            "MULTIPLE_SELECT"
           ],
-          default: "text"
+          default: "TEXT"
         }
       }
     ],

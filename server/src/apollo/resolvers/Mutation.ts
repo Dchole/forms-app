@@ -66,6 +66,9 @@ const Mutation: MutationResolvers<TContext> = {
   },
   editRow: async (_root, { args }, { dataSources: { tables } }) => {
     return tables.editRow(args);
+  },
+  deleteRow: async (_root, { args }, { dataSources: { tables } }) => {
+    return tables.deleteRow(args);
   }
 };
 

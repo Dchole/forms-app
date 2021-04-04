@@ -2,7 +2,7 @@ import { AuthenticationError } from "apollo-server-errors";
 import { verify } from "jsonwebtoken";
 
 const currentUser = (token: string) => {
-  if (!token) throw new AuthenticationError("Unauthenticated!");
+  // if (!token) throw new AuthenticationError("Unauthenticated!");
   return "";
   // const payload: any = verify(token, process.env.JWT_ACCESS_TOKEN!);
   // return payload.uid;

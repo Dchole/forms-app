@@ -5,7 +5,8 @@ import type {
   EditRowInput,
   TableInput,
   Table as ITable,
-  Row
+  Row,
+  Maybe
 } from "../types/generated";
 import type { ITableSchema, IRow } from "../../models/Table";
 
@@ -29,7 +30,7 @@ class Table extends MongoDataSource<ITableSchema> {
     return this.tableReducer(table);
   }
 
-  async getTables(limit: number = 10, skip: number = 0) {
+  async getTables(limit = 10, skip = 0) {
     const tables = await this.model.find().limit(limit).skip(skip);
     return tables.map(table => this.tableReducer(table));
   }
@@ -54,59 +55,46 @@ class Table extends MongoDataSource<ITableSchema> {
 
   async addRow({ tableID, fullName, data }: AddRowInput) {
     const table = await this.model.findById(tableID).select("rows");
-
     if (!table) throw new Error("Something went wrong!");
 
-    const updatedTable: ITableSchema = fullName
-      ? await table.updateOne(
-          { rows: [...table.rows, { fullName, data }] },
-          { new: true }
-        )
-      : await table.updateOne(
-          { rows: [...table.rows, { data }] },
-          { new: true }
-        );
+    const newRow = fullName ? { fullName, data } : { data };
 
-    const rows = [...updatedTable.rows];
+    table.rows.push(newRow as IRow);
+    await table.save();
 
-    const addedRow = rows.pop();
+    const addedRow = table.rows[table.rows.length - 1];
 
     return this.rowReducer(addedRow);
   }
 
   async editRow({ tableID, rowID, fullName, data }: EditRowInput) {
     const table = await this.model.findById(tableID).select("rows");
+    if (!table) throw new Error(`Table with id ${tableID} doesn't exist`);
 
-    if (!table) throw new Error("Something went wrong!");
+    const row = table.rows.find(row => String(row._id) === rowID);
+    if (!row) throw new Error(`Row with id ${rowID} doesn't exist`);
 
-    const updatedRows = table.rows.map(row => {
-      if (row._id === rowID) {
-        return fullName ? { ...row, fullName, data } : { ...row, data };
-      }
+    if (fullName) {
+      row.fullName = fullName;
+    }
 
-      return row;
-    }) as IRow[];
+    row.data = data;
+    await table.save();
 
-    const updatedTable: ITableSchema = await table.updateOne(
-      { rows: updatedRows },
-      { new: true }
-    );
-    const editedRow = updatedTable.rows.find(row => row._id === rowID);
-
-    return this.rowReducer(editedRow);
+    return this.rowReducer(row);
   }
 
   async deleteRow({ tableID, rowID }: DeleteRowInput) {
     const table = await this.model.findById(tableID).select("rows");
+    if (!table) throw new Error(`Table with id ${tableID} doesn't exist`);
 
-    if (!table) throw new Error("Something went wrong!");
+    const row = table.rows.find(row => String(row._id) === rowID);
+    if (!row) throw new Error(`Row with id ${rowID} doesn't exist`);
 
-    const updatedRows = table.rows.filter(row => row._id !== rowID);
-    const deletedRow = table.rows.find(row => row._id === rowID);
+    row.remove();
+    await table.save();
 
-    table.updateOne({ rows: updatedRows }, { new: true });
-
-    return this.rowReducer(deletedRow);
+    return this.rowReducer(row);
   }
 }
 
