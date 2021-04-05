@@ -16,18 +16,30 @@ const Query: QueryResolvers<TContext> = {
   table: async (_, { id }, { dataSources: { tables } }) => {
     return tables.getTable(id);
   },
-  tables: async (_root, { limit, skip }, { dataSources: { tables } }) => {
-    const allTables = await tables.getTables(
+  tables: async (
+    _root,
+    { limit, page, filter },
+    { userID, dataSources: { tables } }
+  ) => {
+    const countTables = tables.countTables(userID);
+
+    const fetchedTables = tables.getTables(
+      userID,
       limit as number | undefined,
-      skip as number | undefined
+      page as number | undefined,
+      filter
     );
+
+    const [totalCount, allTables] = await Promise.all([
+      countTables,
+      fetchedTables
+    ]);
 
     if (!allTables) throw new ApolloError("Something went wrong");
 
     return {
       node: allTables,
-      hasMore: false, // For now,
-      cursor: allTables[allTables.length - 1]._id // For now
+      hasMore: Boolean(totalCount - allTables.length)
     };
   }
 };

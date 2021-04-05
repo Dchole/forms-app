@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
+import { GraphQLResolveInfo } from 'graphql';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
@@ -11,7 +11,6 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  List: any;
 };
 
 
@@ -37,7 +36,7 @@ export type QueryTableArgs = {
 
 export type QueryTablesArgs = {
   limit?: Maybe<Scalars['Int']>;
-  skip?: Maybe<Scalars['Int']>;
+  page?: Maybe<Scalars['Int']>;
   filter?: Maybe<TableFilterInput>;
 };
 
@@ -205,14 +204,13 @@ export type Row = {
   _id?: Maybe<Scalars['ID']>;
   fullName?: Maybe<Scalars['String']>;
   data: Array<Scalars['String']>;
+  date: Scalars['String'];
 };
-
 
 export type TableConnection = {
   __typename?: 'TableConnection';
   node: Array<Table>;
   hasMore: Scalars['Boolean'];
-  cursor: Scalars['ID'];
 };
 
 export enum EFields {
@@ -329,7 +327,6 @@ export type ResolversTypes = {
   Table: ResolverTypeWrapper<Table>;
   Field: ResolverTypeWrapper<Field>;
   Row: ResolverTypeWrapper<Row>;
-  List: ResolverTypeWrapper<Scalars['List']>;
   TableConnection: ResolverTypeWrapper<TableConnection>;
   EFields: EFields;
   AdditionalEntityFields: AdditionalEntityFields;
@@ -359,7 +356,6 @@ export type ResolversParentTypes = {
   Table: Table;
   Field: Field;
   Row: Row;
-  List: Scalars['List'];
   TableConnection: TableConnection;
   AdditionalEntityFields: AdditionalEntityFields;
 };
@@ -466,17 +462,13 @@ export type RowResolvers<ContextType = any, ParentType extends ResolversParentTy
   _id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   fullName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   data?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  date?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
-
-export interface ListScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['List'], any> {
-  name: 'List';
-}
 
 export type TableConnectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['TableConnection'] = ResolversParentTypes['TableConnection']> = {
   node?: Resolver<Array<ResolversTypes['Table']>, ParentType, ContextType>;
   hasMore?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  cursor?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -490,7 +482,6 @@ export type Resolvers<ContextType = any> = {
   Table?: TableResolvers<ContextType>;
   Field?: FieldResolvers<ContextType>;
   Row?: RowResolvers<ContextType>;
-  List?: GraphQLScalarType;
   TableConnection?: TableConnectionResolvers<ContextType>;
 };
 

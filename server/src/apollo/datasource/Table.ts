@@ -6,7 +6,8 @@ import type {
   TableInput,
   Table as ITable,
   Row,
-  Maybe
+  Maybe,
+  TableFilterInput
 } from "../types/generated";
 import type { ITableSchema, IRow } from "../../models/Table";
 
@@ -21,8 +22,12 @@ class Table extends MongoDataSource<ITableSchema> {
   rowReducer(row?: IRow | null): Row {
     if (!row) throw new Error("Something went wrong!");
 
-    const { _id, fullName, data } = row;
-    return { _id, fullName, data };
+    const { _id, fullName, data, date } = row;
+    return { _id, fullName, data, date };
+  }
+
+  async countTables(admin: string) {
+    return this.model.find({ admin }).countDocuments();
   }
 
   async getTable(id: string) {
@@ -30,8 +35,21 @@ class Table extends MongoDataSource<ITableSchema> {
     return this.tableReducer(table);
   }
 
-  async getTables(limit = 10, skip = 0) {
-    const tables = await this.model.find().limit(limit).skip(skip);
+  async getTables(
+    userID: string,
+    limit = 6,
+    page = 1,
+    filter?: Maybe<TableFilterInput>
+  ) {
+    const tablesFilter = filter
+      ? this.model.find({ admin: userID, [filter.key]: filter.value })
+      : this.model.find({ admin: userID });
+
+    const tables = await tablesFilter
+      .limit(limit)
+      .skip((page - 1) * limit)
+      .sort("-createdAt");
+
     return tables.map(table => this.tableReducer(table));
   }
 

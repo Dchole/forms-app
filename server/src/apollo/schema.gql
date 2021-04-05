@@ -1,7 +1,7 @@
 type Query {
   currentUser: User!
   table(id: ID!): Table!
-  tables(limit: Int, skip: Int, filter: TableFilterInput): TableConnection!
+  tables(limit: Int, page: Int, filter: TableFilterInput): TableConnection!
 }
 
 type Mutation {
@@ -115,14 +115,12 @@ type Row {
   _id: ID
   fullName: String
   data: [String!]!
+  date: String!
 }
-
-scalar List
 
 type TableConnection {
   node: [Table!]!
   hasMore: Boolean!
-  cursor: ID!
 }
 
 enum EFields {

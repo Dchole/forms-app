@@ -16,6 +16,7 @@ export interface IField extends Document {
 export interface IRow extends Document {
   fullName?: string;
   data: string[];
+  date: string;
 }
 
 export interface ITableSchema extends Document {
@@ -46,7 +47,10 @@ const TableSchema = new Schema(
     },
     fields: [
       {
-        name: String,
+        name: {
+          type: String,
+          required: true
+        },
         type: {
           type: String,
           enum: [
@@ -67,6 +71,10 @@ const TableSchema = new Schema(
         data: {
           type: Schema.Types.Array,
           required: true
+        },
+        date: {
+          type: Schema.Types.Date,
+          default: Date.now
         }
       }
     ],
