@@ -19,8 +19,9 @@ const Query: QueryResolvers<TContext> = {
   tables: async (
     _root,
     { limit, page, filter },
-    { userID, dataSources: { tables } }
+    { dataSources: { tables, users } }
   ) => {
+    const userID = users.getUserID();
     const countTables = tables.countTables(userID);
 
     const fetchedTables = tables.getTables(

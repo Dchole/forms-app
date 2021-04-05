@@ -53,11 +53,14 @@ const Mutation: MutationResolvers<TContext> = {
   updateUser: async (_, { args }, { dataSources: { users } }) => {
     return users.updateUser(args);
   },
-  createTable: async (_, { args }, { dataSources: { tables }, userID }) => {
+  createTable: async (_, { args }, { dataSources: { tables, users } }) => {
+    const userID = users.getUserID();
+
     return tables.createTable({ ...args, admin: userID });
   },
-  deleteTable: async (_, { id }, { dataSources: { tables } }) => {
-    const deleted = await tables.deleteTable(id);
+  deleteTable: async (_, { id }, { dataSources: { tables, users } }) => {
+    const userID = users.getUserID();
+    const deleted = await tables.deleteTable(id, userID);
 
     return Boolean(deleted);
   },
@@ -67,14 +70,21 @@ const Mutation: MutationResolvers<TContext> = {
 
     return newRow;
   },
-  editRow: async (_, { args }, { pubsub, dataSources: { tables } }) => {
-    const editedRow = await tables.editRow(args);
+  editRow: async (_, { args }, { pubsub, dataSources: { tables, users } }) => {
+    const editedRow = await tables.editRow({
+      ...args,
+      admin: users.getUserID()
+    });
     pubsub.publish("ROW_EDITED", { editedRow });
 
     return editedRow;
   },
-  deleteRow: async (_, { args }, { pubsub, dataSources: { tables } }) => {
-    const deletedRow = tables.deleteRow(args);
+  deleteRow: async (
+    _,
+    { args },
+    { pubsub, dataSources: { tables, users } }
+  ) => {
+    const deletedRow = tables.deleteRow({ ...args, admin: users.getUserID() });
     pubsub.publish("ROW_DELETED", { deletedRow });
 
     return deletedRow;
@@ -82,9 +92,9 @@ const Mutation: MutationResolvers<TContext> = {
   toggleDisableTable: async (
     _,
     { id },
-    { pubsub, dataSources: { tables } }
+    { pubsub, dataSources: { tables, users } }
   ) => {
-    const disabled = await tables.toggleDisableTable(id);
+    const disabled = await tables.toggleDisableTable(id, users.getUserID());
     pubsub.publish("TOGGLE", { disabled });
 
     return disabled;

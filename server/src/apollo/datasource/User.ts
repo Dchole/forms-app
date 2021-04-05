@@ -1,10 +1,8 @@
 import { MongoDataSource } from "apollo-datasource-mongodb";
 import { IUserSchema } from "../../models/User";
+import currentUser from "../../utils/currentUser";
+import type { TContext } from "../types/context";
 import type { Maybe } from "../types/generated";
-
-interface IContext {
-  userID: string;
-}
 
 interface IUserInput {
   firstName: string;
@@ -13,9 +11,14 @@ interface IUserInput {
   password: string;
 }
 
-class User extends MongoDataSource<IUserSchema, IContext> {
+class User extends MongoDataSource<IUserSchema, TContext> {
+  getUserID() {
+    const { req } = this.context;
+    return currentUser(req);
+  }
+
   async getCurrentUser() {
-    const { userID } = this.context;
+    const userID = this.getUserID();
     return this.findOneById(userID);
   }
 
@@ -49,7 +52,7 @@ class User extends MongoDataSource<IUserSchema, IContext> {
     const updatedUser = await this.model
       .findOneAndUpdate(
         {
-          _id: this.context.userID
+          _id: this.getUserID()
         },
         update,
         { new: true }

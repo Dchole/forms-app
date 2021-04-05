@@ -9,7 +9,6 @@ import Table from "./apollo/datasource/Table";
 import User from "./apollo/datasource/User";
 import TableModel from "./models/Table";
 import UserModel from "./models/User";
-import currentUser from "./utils/currentUser";
 
 config();
 
@@ -44,13 +43,7 @@ const server = new ApolloServer({
     users: new User(UserModel),
     tables: new Table(TableModel)
   }),
-  context: ({ req }) => {
-    const token = req?.headers.authorization?.split(" ")[1] || "";
-
-    const userID = currentUser(token);
-
-    return { userID, pubsub };
-  }
+  context: ({ req }) => ({ req, pubsub })
 });
 
 server.listen().then(({ url }) => {

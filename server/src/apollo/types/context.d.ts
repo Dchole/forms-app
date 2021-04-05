@@ -1,9 +1,10 @@
 import User from "../datasource/User";
 import Table from "../datasource/Table";
 import { PubSub } from "graphql-subscriptions";
+import { ExpressContext } from "apollo-server-express";
 
 export type TContext = {
-  userID: string;
+  req: ExpressContext["req"];
   pubsub: PubSub;
   dataSources: {
     users: User;

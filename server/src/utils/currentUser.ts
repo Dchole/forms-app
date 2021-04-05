@@ -1,11 +1,14 @@
 import { AuthenticationError } from "apollo-server-errors";
+import { ExpressContext } from "apollo-server-express";
 import { verify } from "jsonwebtoken";
 
-const currentUser = (token: string) => {
-  // if (!token) throw new AuthenticationError("Unauthenticated!");
-  return "6069b9eeaf57310ad9ff883a";
-  // const payload: any = verify(token, process.env.JWT_ACCESS_TOKEN!);
-  // return payload.uid;
+const currentUser = (req: ExpressContext["req"]) => {
+  const token = req.headers.authorization?.split(" ")[1] || "";
+
+  if (!token) throw new AuthenticationError("Unauthenticated!");
+
+  const payload: any = verify(token, process.env.JWT_ACCESS_TOKEN!);
+  return payload.uid;
 };
 
 export default currentUser;

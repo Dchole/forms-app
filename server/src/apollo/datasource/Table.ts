@@ -10,6 +10,7 @@ import type {
   TableFilterInput
 } from "../types/generated";
 import type { ITableSchema, IRow } from "../../models/Table";
+import { ForbiddenError } from "apollo-server-errors";
 
 class Table extends MongoDataSource<ITableSchema> {
   tableReducer(table?: ITableSchema | null): TTable {
@@ -59,13 +60,22 @@ class Table extends MongoDataSource<ITableSchema> {
     return this.tableReducer(createdTable);
   }
 
-  async deleteTable(id: string) {
-    return this.model.deleteOne({ _id: id });
+  async deleteTable(id: string, admin: string) {
+    const table = await this.findOneById(id);
+
+    if (table?.admin !== admin)
+      throw new ForbiddenError(
+        "You don't have permission to delete this table"
+      );
+
+    return table.deleteOne();
   }
 
-  async toggleDisableTable(id: string) {
+  async toggleDisableTable(id: string, admin: string) {
     const table = await this.model.findById(id).select("disabled");
-    if (!table) throw new Error("Something went wrong!");
+
+    if (table?.admin !== admin)
+      throw new ForbiddenError("You don't have permission for this action");
 
     table.disabled = !table.disabled;
     await table.save();
@@ -87,9 +97,18 @@ class Table extends MongoDataSource<ITableSchema> {
     return this.rowReducer(addedRow);
   }
 
-  async editRow({ tableID, rowID, fullName, data }: EditRowInput) {
+  async editRow({
+    tableID,
+    rowID,
+    fullName,
+    data,
+    admin
+  }: EditRowInput & { admin: string }) {
     const table = await this.model.findById(tableID).select("rows");
     if (!table) throw new Error(`Table with id ${tableID} doesn't exist`);
+
+    if (table.admin !== admin)
+      throw new ForbiddenError("You don't have permission to edit this data");
 
     const row = table.rows.find(row => String(row._id) === rowID);
     if (!row) throw new Error(`Row with id ${rowID} doesn't exist`);
@@ -104,9 +123,16 @@ class Table extends MongoDataSource<ITableSchema> {
     return this.rowReducer(row);
   }
 
-  async deleteRow({ tableID, rowID }: DeleteRowInput) {
+  async deleteRow({
+    tableID,
+    rowID,
+    admin
+  }: DeleteRowInput & { admin: string }) {
     const table = await this.model.findById(tableID).select("rows");
     if (!table) throw new Error(`Table with id ${tableID} doesn't exist`);
+
+    if (table.admin !== admin)
+      throw new ForbiddenError("You don't have permission to delete this data");
 
     const row = table.rows.find(row => String(row._id) === rowID);
     if (!row) throw new Error(`Row with id ${rowID} doesn't exist`);
