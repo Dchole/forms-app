@@ -9,7 +9,7 @@ import {
 
 const Mutation: MutationResolvers<TContext> = {
   login: async (
-    _root,
+    _,
     { args: { email, password } },
     { dataSources: { users } }
   ) => {
@@ -31,7 +31,7 @@ const Mutation: MutationResolvers<TContext> = {
     return { accessToken, refreshToken };
   },
   register: async (
-    _root,
+    _,
     { args: { email, password, ...name } },
     { dataSources: { users } }
   ) => {
@@ -50,25 +50,44 @@ const Mutation: MutationResolvers<TContext> = {
       ...name
     });
   },
-  updateUser: async (_root, { args }, { dataSources: { users } }) => {
+  updateUser: async (_, { args }, { dataSources: { users } }) => {
     return users.updateUser(args);
   },
-  createTable: async (_root, { args }, { dataSources: { tables }, userID }) => {
+  createTable: async (_, { args }, { dataSources: { tables }, userID }) => {
     return tables.createTable({ ...args, admin: userID });
   },
-  deleteTable: async (_root, { id }, { dataSources: { tables } }) => {
+  deleteTable: async (_, { id }, { dataSources: { tables } }) => {
     const deleted = await tables.deleteTable(id);
 
     return Boolean(deleted);
   },
-  addRow: async (_root, { args }, { dataSources: { tables } }) => {
-    return tables.addRow(args);
+  addRow: async (_, { args }, { pubsub, dataSources: { tables } }) => {
+    const newRow = await tables.addRow(args);
+    pubsub.publish("ROW_ADDED", { newRow });
+
+    return newRow;
   },
-  editRow: async (_root, { args }, { dataSources: { tables } }) => {
-    return tables.editRow(args);
+  editRow: async (_, { args }, { pubsub, dataSources: { tables } }) => {
+    const editedRow = await tables.editRow(args);
+    pubsub.publish("ROW_EDITED", { editedRow });
+
+    return editedRow;
   },
-  deleteRow: async (_root, { args }, { dataSources: { tables } }) => {
-    return tables.deleteRow(args);
+  deleteRow: async (_, { args }, { pubsub, dataSources: { tables } }) => {
+    const deletedRow = tables.deleteRow(args);
+    pubsub.publish("ROW_DELETED", { deletedRow });
+
+    return deletedRow;
+  },
+  toggleDisableTable: async (
+    _,
+    { id },
+    { pubsub, dataSources: { tables } }
+  ) => {
+    const disabled = await tables.toggleDisableTable(id);
+    pubsub.publish("TOGGLE", { disabled });
+
+    return disabled;
   }
 };
 

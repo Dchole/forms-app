@@ -2,7 +2,7 @@ import { config } from "dotenv";
 import { GraphQLFileLoader } from "@graphql-tools/graphql-file-loader";
 import { loadSchemaSync } from "@graphql-tools/load";
 import { addResolversToSchema } from "@graphql-tools/schema";
-import { ApolloServer } from "apollo-server";
+import { ApolloServer, PubSub } from "apollo-server";
 import { connect } from "mongoose";
 import resolvers from "./apollo/resolvers";
 import Table from "./apollo/datasource/Table";
@@ -36,6 +36,8 @@ connect(
   .then(() => console.log("Connected to DB!"))
   .catch((err: Error) => console.log(err));
 
+const pubsub = new PubSub();
+
 const server = new ApolloServer({
   schema: schemaWithResolvers,
   dataSources: () => ({
@@ -43,11 +45,11 @@ const server = new ApolloServer({
     tables: new Table(TableModel)
   }),
   context: ({ req }) => {
-    const token = req.headers.authorization?.split(" ")[1] || "";
+    const token = req?.headers.authorization?.split(" ")[1] || "";
 
     const userID = currentUser(token);
 
-    return { userID };
+    return { userID, pubsub };
   }
 });
 

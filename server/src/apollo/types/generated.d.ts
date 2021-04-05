@@ -47,10 +47,10 @@ export type Mutation = {
   register: User;
   updateUser: User;
   createTable: Table;
+  deleteTable: Scalars['Boolean'];
   addRow: Row;
   editRow: Row;
   deleteRow: Row;
-  deleteTable: Scalars['Boolean'];
   toggleDisableTable: Scalars['Boolean'];
 };
 
@@ -75,6 +75,11 @@ export type MutationCreateTableArgs = {
 };
 
 
+export type MutationDeleteTableArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type MutationAddRowArgs = {
   args: AddRowInput;
 };
@@ -90,13 +95,16 @@ export type MutationDeleteRowArgs = {
 };
 
 
-export type MutationDeleteTableArgs = {
+export type MutationToggleDisableTableArgs = {
   id: Scalars['ID'];
 };
 
-
-export type MutationToggleDisableTableArgs = {
-  id: Scalars['ID'];
+export type Subscription = {
+  __typename?: 'Subscription';
+  newRow: Row;
+  editedRow: Row;
+  deletedRow: Row;
+  toggleDisableTable: Scalars['Boolean'];
 };
 
 export type TableFilterInput = {
@@ -304,6 +312,7 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Subscription: ResolverTypeWrapper<{}>;
   TableFilterInput: TableFilterInput;
   String: ResolverTypeWrapper<Scalars['String']>;
   LoginInput: LoginInput;
@@ -333,6 +342,7 @@ export type ResolversParentTypes = {
   Int: Scalars['Int'];
   Mutation: {};
   Boolean: Scalars['Boolean'];
+  Subscription: {};
   TableFilterInput: TableFilterInput;
   String: Scalars['String'];
   LoginInput: LoginInput;
@@ -400,11 +410,18 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   register?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationRegisterArgs, 'args'>>;
   updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'args'>>;
   createTable?: Resolver<ResolversTypes['Table'], ParentType, ContextType, RequireFields<MutationCreateTableArgs, 'args'>>;
+  deleteTable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteTableArgs, 'id'>>;
   addRow?: Resolver<ResolversTypes['Row'], ParentType, ContextType, RequireFields<MutationAddRowArgs, 'args'>>;
   editRow?: Resolver<ResolversTypes['Row'], ParentType, ContextType, RequireFields<MutationEditRowArgs, 'args'>>;
   deleteRow?: Resolver<ResolversTypes['Row'], ParentType, ContextType, RequireFields<MutationDeleteRowArgs, 'args'>>;
-  deleteTable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteTableArgs, 'id'>>;
   toggleDisableTable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationToggleDisableTableArgs, 'id'>>;
+};
+
+export type SubscriptionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = {
+  newRow?: SubscriptionResolver<ResolversTypes['Row'], "newRow", ParentType, ContextType>;
+  editedRow?: SubscriptionResolver<ResolversTypes['Row'], "editedRow", ParentType, ContextType>;
+  deletedRow?: SubscriptionResolver<ResolversTypes['Row'], "deletedRow", ParentType, ContextType>;
+  toggleDisableTable?: SubscriptionResolver<ResolversTypes['Boolean'], "toggleDisableTable", ParentType, ContextType>;
 };
 
 export type TokenResolvers<ContextType = any, ParentType extends ResolversParentTypes['Token'] = ResolversParentTypes['Token']> = {
@@ -466,6 +483,7 @@ export type TableConnectionResolvers<ContextType = any, ParentType extends Resol
 export type Resolvers<ContextType = any> = {
   Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  Subscription?: SubscriptionResolvers<ContextType>;
   Token?: TokenResolvers<ContextType>;
   RegisterResult?: RegisterResultResolvers<ContextType>;
   User?: UserResolvers<ContextType>;

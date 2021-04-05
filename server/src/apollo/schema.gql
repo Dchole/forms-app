@@ -9,11 +9,18 @@ type Mutation {
   register(args: RegisterInput!): User!
   updateUser(args: UpdateInput!): User!
   createTable(args: TableInput!): Table!
+  deleteTable(id: ID!): Boolean!
   addRow(args: AddRowInput!): Row!
   editRow(args: EditRowInput!): Row!
   deleteRow(args: DeleteRowInput!): Row!
-  deleteTable(id: ID!): Boolean!
   toggleDisableTable(id: ID!): Boolean!
+}
+
+type Subscription {
+  newRow: Row!
+  editedRow: Row!
+  deletedRow: Row!
+  toggleDisableTable: Boolean!
 }
 
 input TableFilterInput {

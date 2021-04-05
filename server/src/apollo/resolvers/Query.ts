@@ -13,6 +13,9 @@ const Query: QueryResolvers<TContext> = {
       fullName: user.fullName
     };
   },
+  table: async (_, { id }, { dataSources: { tables } }) => {
+    return tables.getTable(id);
+  },
   tables: async (_root, { limit, skip }, { dataSources: { tables } }) => {
     const allTables = await tables.getTables(
       limit as number | undefined,

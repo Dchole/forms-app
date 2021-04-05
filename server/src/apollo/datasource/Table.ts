@@ -47,10 +47,12 @@ class Table extends MongoDataSource<ITableSchema> {
 
   async toggleDisableTable(id: string) {
     const table = await this.model.findById(id).select("disabled");
-
     if (!table) throw new Error("Something went wrong!");
 
-    table.updateOne({ disabled: !table.disabled });
+    table.disabled = !table.disabled;
+    await table.save();
+
+    return table.disabled;
   }
 
   async addRow({ tableID, fullName, data }: AddRowInput) {
