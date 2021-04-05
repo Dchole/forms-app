@@ -4,7 +4,7 @@ import type {
   DeleteRowInput,
   EditRowInput,
   TableInput,
-  Table as ITable,
+  Table as TTable,
   Row,
   Maybe,
   TableFilterInput
@@ -12,7 +12,7 @@ import type {
 import type { ITableSchema, IRow } from "../../models/Table";
 
 class Table extends MongoDataSource<ITableSchema> {
-  tableReducer(table?: ITableSchema | null): ITable {
+  tableReducer(table?: ITableSchema | null): TTable {
     if (!table) throw new Error("Something went wrong!");
 
     const { _id, title, fields, disabled, deadline, rows, limit } = table;
