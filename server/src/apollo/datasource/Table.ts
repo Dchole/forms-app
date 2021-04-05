@@ -19,7 +19,7 @@ class Table extends MongoDataSource<ITableSchema> {
     return { _id, title, fields, disabled, deadline, rows, limit };
   }
 
-  rowReducer(row?: IRow | null): Row {
+  rowReducer(row?: Maybe<IRow>): Row {
     if (!row) throw new Error("Something went wrong!");
 
     const { _id, fullName, data, date } = row;
