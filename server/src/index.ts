@@ -9,6 +9,7 @@ import Table from "./apollo/datasource/Table";
 import User from "./apollo/datasource/User";
 import TableModel from "./models/Table";
 import UserModel from "./models/User";
+import { startDatabase } from "./lib/database";
 
 config();
 
@@ -21,19 +22,7 @@ const schemaWithResolvers = addResolversToSchema({
   resolvers
 });
 
-connect(
-  process.env.NODE_ENV === "development"
-    ? process.env.MONGODB_LOCAL!
-    : process.env.MONGODB_URI!,
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-    useCreateIndex: true
-  }
-)
-  .then(() => console.log("Connected to DB!"))
-  .catch((err: Error) => console.log(err));
+startDatabase();
 
 const pubsub = new PubSub();
 
@@ -49,3 +38,5 @@ const server = new ApolloServer({
 server.listen().then(({ url }) => {
   console.log(`🚀  Server ready at ${url}`);
 });
+
+export default server;

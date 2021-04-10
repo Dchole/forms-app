@@ -9,6 +9,7 @@ const Query: QueryResolvers<TContext> = {
     if (!user) throw new ApolloError("Something went wrong");
 
     return {
+      _id: user._id,
       email: user.email,
       fullName: user.fullName
     };
