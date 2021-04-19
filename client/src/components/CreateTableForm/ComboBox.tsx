@@ -21,7 +21,7 @@ const mapOptions = (options: { icon: JSX.Element; text: string }[]) =>
     </MenuItem>
   ));
 
-const ComboBox: React.FC = ({ children }) => {
+const ComboBox: React.FC<{ mobile: boolean }> = ({ mobile }) => {
   const [type, setType] = useState(fieldTypes.Text[0].text);
 
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -29,7 +29,12 @@ const ComboBox: React.FC = ({ children }) => {
   };
 
   return (
-    <FormControl variant="outlined" size="small" margin="normal" fullWidth>
+    <FormControl
+      variant="outlined"
+      size="small"
+      margin={mobile ? "none" : "normal"}
+      fullWidth
+    >
       <InputLabel id="select-field-type-outlined-label">Field Type</InputLabel>
       <Select
         name="fieldType"
@@ -39,7 +44,7 @@ const ComboBox: React.FC = ({ children }) => {
         labelId="select-field-type-label"
         onChange={handleChange}
       >
-        {Object.entries(fieldTypes).map(([category, options], index) => [
+        {Object.entries(fieldTypes).map(([category, options]) => [
           <ListSubheader>{category}</ListSubheader>,
           mapOptions(options)
         ])}

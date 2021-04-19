@@ -43,7 +43,12 @@ const useTableFormStyles = makeStyles(theme =>
     fields: {
       display: "flex",
       alignItems: "center",
-      gap: theme.spacing(2)
+      gap: theme.spacing(2),
+      flexDirection: "column",
+
+      [theme.breakpoints.up("sm")]: {
+        flexDirection: "row"
+      }
     },
     actions: {
       display: "flex",

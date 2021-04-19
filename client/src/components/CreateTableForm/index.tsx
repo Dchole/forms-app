@@ -88,7 +88,7 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
                   autoFocus
                   fullWidth
                 />
-                <ComboBox />
+                <ComboBox mobile={mobile} />
               </div>
               <div className={classes.actions}>
                 <Button onClick={handleClose}>Cancel</Button>
