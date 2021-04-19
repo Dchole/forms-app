@@ -2,6 +2,9 @@ import { makeStyles, createStyles } from "@material-ui/core/styles";
 
 const useTableFormStyles = makeStyles(theme =>
   createStyles({
+    root: {
+      backgroundColor: theme.palette.background.default
+    },
     container: {
       height: "100vh",
 
@@ -25,7 +28,22 @@ const useTableFormStyles = makeStyles(theme =>
 
       "&:focus-within": {
         boxShadow: theme.shadows[1]
+      },
+
+      "& .MuiToolbar-root": {
+        minHeight: "fit-content",
+        justifyContent: "space-between",
+        alignItems: "center",
+
+        "& input": {
+          fontSize: "xx-large"
+        }
       }
+    },
+    fields: {
+      display: "flex",
+      alignItems: "center",
+      gap: theme.spacing(2)
     },
     actions: {
       display: "flex",

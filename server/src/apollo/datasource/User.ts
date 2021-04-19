@@ -1,4 +1,5 @@
 import { MongoDataSource } from "apollo-datasource-mongodb";
+import { genSalt, hash } from "bcryptjs";
 import { IUserSchema } from "../../models/User";
 import currentUser from "../../utils/currentUser";
 import type { TContext } from "../types/context";
@@ -33,10 +34,13 @@ class User extends MongoDataSource<IUserSchema, TContext> {
   async createUser(details: IUserInput) {
     const { firstName, lastName, email, password } = details;
 
+    const salt = await genSalt(10);
+    const hashedPassword = await hash(password, salt);
+
     return this.model.create({
       fullName: `${firstName} ${lastName}`,
       email,
-      password
+      password: hashedPassword
     });
   }
 

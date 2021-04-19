@@ -1,14 +1,19 @@
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { useTheme } from "@material-ui/core/styles";
 import { TransitionProps } from "@material-ui/core/transitions/transition";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import Slide from "@material-ui/core/Slide";
+import Toolbar from "@material-ui/core/Toolbar";
+import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
+import Input from "@material-ui/core/Input";
 import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
+import PreviewIcon from "@material-ui/icons/Visibility";
+import ComboBox from "./ComboBox";
 import useTableFormStyles from "../../styles/useTableFormStyles";
 import { Field, Form, Formik } from "formik";
 import { handleSubmit, initialValues } from "../../lib/create-table-config";
@@ -33,56 +38,62 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
   const mobile = useMediaQuery(breakpoints.down("xs"));
   const classes = useTableFormStyles();
 
+  const [disableUnderline, setDisableUnderline] = useState(true);
+
   return (
     <Dialog
+      classes={{ paperFullScreen: classes.root }}
       open={open}
       onClose={handleClose}
       TransitionComponent={Transition}
       fullScreen
     >
       <Container
-        maxWidth="xs"
+        maxWidth="sm"
         disableGutters={mobile}
         className={classes.container}
       >
         <Paper variant="outlined" className={classes.paper}>
-          <Typography
-            variant="h5"
-            component="h2"
-            align={mobile ? "center" : "left"}
-          >
-            Enter Table Data
-          </Typography>
+          <Toolbar disableGutters>
+            <Input
+              value="Untitled Table"
+              disableUnderline={disableUnderline}
+              onFocus={() => setDisableUnderline(false)}
+              onBlur={() => setDisableUnderline(true)}
+            />
+            <IconButton
+              component={Link}
+              to="/preview?slug"
+              aria-label="show preview"
+              role={undefined}
+            >
+              <PreviewIcon />
+            </IconButton>
+          </Toolbar>
           <Formik initialValues={initialValues} onSubmit={handleSubmit}>
             <Form>
-              <Field
-                component={TextField}
-                id="title"
-                name="title"
-                label="Title"
-                variant="outlined"
-                margin="normal"
-                autoComplete="off"
-                autoCapitalize="word"
-                autoFocus
-                fullWidth
-              />
-              <Field
-                component={TextField}
-                id="fields"
-                helperText="Separate fields with comma"
-                name="fields"
-                label="Fields"
-                placeholder="Name, Email, Tel, etc..."
-                variant="outlined"
-                margin="normal"
-                autoComplete="off"
-                fullWidth
-              />
+              <div className={classes.fields}>
+                <Field
+                  component={TextField}
+                  id="field"
+                  name="field"
+                  label="Field Name"
+                  placeholder="ex. Full Name"
+                  variant="outlined"
+                  size="small"
+                  margin="normal"
+                  autoComplete="off"
+                  autoCapitalize="word"
+                  aria-required
+                  autoFocus
+                  fullWidth
+                />
+                <ComboBox />
+              </div>
               <div className={classes.actions}>
                 <Button onClick={handleClose}>Cancel</Button>
                 <Button color="primary" variant="contained" type="submit">
-                  Save & Continue
+                  Create Table
                 </Button>
               </div>
             </Form>

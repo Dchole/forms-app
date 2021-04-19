@@ -13,7 +13,7 @@ import { startDatabase } from "./lib/database";
 
 config();
 
-const schema = loadSchemaSync("src/apollo/schema.gql", {
+export const schema = loadSchemaSync("src/apollo/schema.gql", {
   loaders: [new GraphQLFileLoader()]
 });
 

@@ -1,6 +1,6 @@
 import type { TContext } from "../types/context";
 import type { MutationResolvers } from "../types/generated";
-import { compare, genSalt, hash } from "bcryptjs";
+import { compare } from "bcryptjs";
 import { UserInputError } from "apollo-server-errors";
 import {
   createAccessToken,
@@ -41,12 +41,9 @@ const Mutation: MutationResolvers<TContext> = {
       throw new UserInputError("Email already taken", { key: "email" });
     }
 
-    const salt = await genSalt(10);
-    const hashedPassword = await hash(password, salt);
-
     return users.createUser({
       email,
-      password: hashedPassword,
+      password,
       ...name
     });
   },

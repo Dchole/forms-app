@@ -1,7 +1,5 @@
 import { connect, Mongoose } from "mongoose";
 
-console.log(typeof import("mongoose"));
-
 let db: Mongoose;
 
 export async function startDatabase() {
