@@ -19,15 +19,16 @@ const useTableFormStyles = makeStyles(theme =>
         "& .MuiIconButton-root": {
           border: `2px solid ${theme.palette.divider}`,
           position: "absolute",
+          top: 2,
 
           "&:first-child": {
             left: "0",
-            transform: "translate(-140%, 90px)"
+            transform: "translateX(-140%)"
           },
 
           "&:nth-child(2)": {
             right: "0",
-            transform: "translate(140%, 90px)"
+            transform: "translateX(140%)"
           }
         }
       }

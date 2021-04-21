@@ -39,8 +39,9 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
 }) => {
   const { breakpoints } = useTheme();
   const titleRef = useRef<HTMLInputElement | null>(null);
-  const buttonsYPosition = useRef<number>(0);
-  const yDistance = useRef<number>(0);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+  const buttonsRef = useRef<HTMLDivElement | null>(null);
+  const buttonsRelativePosition = useRef<number>(0);
   const mobile = useMediaQuery(breakpoints.down("xs"));
   const classes = useTableFormStyles();
 
@@ -48,12 +49,9 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
   const [fields, setFields] = useState([nanoid()]);
   const [disableUnderline, setDisableUnderline] = useState(true);
   const [focusedField, setFocusedField] = useState({ name: "", filled: false });
-  const [incremented, setIncremented] = useState(false);
-  const [decremented, setDecremented] = useState(false);
 
   const addField = () => {
     setFields(f => [...f, nanoid()]);
-    setIncremented(true);
   };
 
   const removeField = () => {
@@ -69,13 +67,11 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
         name: lastField
       }));
 
-      setDecremented(true);
-
       getElement<HTMLInputElement>(`#${lastField}`)?.focus();
     }
   };
 
-  const handleFocused = (event: React.FocusEvent<HTMLInputElement>) => {
+  const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
     setFocusedField(f => ({ ...f, name: event.target.name }));
 
     // Check if field has value
@@ -83,6 +79,9 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
       ? setFocusedField(f => ({ ...f, filled: true }))
       : setFocusedField(f => ({ ...f, filled: false }));
   };
+
+  const handleBlur = (event: React.FocusEvent<HTMLInputElement>) =>
+    setFocusedField(f => ({ name: "", filled: false }));
 
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     Boolean(event.target.value)
@@ -96,47 +95,49 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
   };
 
   useEffect(() => {
-    const lastField = fields[fields.length - 1];
-    const prevField = fields[fields.length - 2];
-
-    const prevFieldElement = getElement<HTMLInputElement>(`#${prevField}`);
-    const lastFieldElement = getElement<HTMLInputElement>(`#${lastField}`);
-    const buttons = getElement<HTMLButtonElement>(".inc-dec-buttons");
-
-    if (prevFieldElement && lastFieldElement) {
-      yDistance.current =
-        getElementYPosition(lastFieldElement) -
-        getElementYPosition(prevFieldElement);
-    }
-
-    const newButtonsYPosition = incremented
-      ? buttonsYPosition.current + yDistance.current
-      : decremented
-      ? buttonsYPosition.current - yDistance.current
-      : 0;
-
-    if (incremented || decremented) {
-      buttons?.animate(
-        [
-          { transform: `translateY(${buttonsYPosition.current}px)` },
-          { transform: `translateY(${newButtonsYPosition}px)` }
-        ],
-        {
-          duration: 150,
-          easing: "ease-out",
-          fill: "forwards"
-        }
+    if (focusedField.name) {
+      const buttons = buttonsRef.current;
+      const focusedFieldElement = getElement<HTMLInputElement>(
+        `#${focusedField.name}`
       );
 
-      buttonsYPosition.current = newButtonsYPosition;
-    }
+      if (buttons && focusedFieldElement && dialogRef.current) {
+        const buttonsYPosition = getElementYPosition(
+          buttons,
+          dialogRef.current
+        );
+        const focusedFieldYPosition = getElementYPosition(
+          focusedFieldElement,
+          dialogRef.current
+        );
 
-    setIncremented(false);
-    setDecremented(false);
-  }, [fields, decremented, incremented]);
+        const displacement = focusedFieldYPosition - buttonsYPosition;
+
+        console.log(buttonsYPosition, focusedFieldYPosition, displacement);
+
+        const newButtonsRelativePosition =
+          buttonsRelativePosition.current + displacement;
+
+        buttons.animate(
+          [
+            { transform: `translateY(${buttonsRelativePosition.current}px)` },
+            { transform: `translateY(${newButtonsRelativePosition}px)` }
+          ],
+          {
+            duration: 150,
+            easing: "ease-out",
+            fill: "forwards"
+          }
+        );
+
+        buttonsRelativePosition.current = newButtonsRelativePosition;
+      }
+    }
+  }, [focusedField.name]);
 
   return (
     <Dialog
+      ref={dialogRef}
       classes={{ paperFullScreen: classes.root }}
       open={open}
       onClose={handleClose}
@@ -148,7 +149,7 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
         disableGutters={mobile}
         className={classes.container}
       >
-        <div className="inc-dec-buttons">
+        <div ref={buttonsRef} className="inc-dec-buttons">
           <IconButton
             size="small"
             aria-label="remove field"
@@ -201,7 +202,8 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
                   margin="normal"
                   autoComplete="off"
                   autoCapitalize="word"
-                  onFocus={handleFocused}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
                   onChange={handleInput}
                   aria-required
                   autoFocus
