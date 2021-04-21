@@ -7,9 +7,29 @@ const useTableFormStyles = makeStyles(theme =>
     },
     container: {
       height: "100vh",
+      position: "relative",
 
       [theme.breakpoints.up("sm")]: {
         marginTop: 100
+      },
+
+      "& .inc-dec-buttons": {
+        position: "relative",
+
+        "& .MuiIconButton-root": {
+          border: `2px solid ${theme.palette.divider}`,
+          position: "absolute",
+
+          "&:first-child": {
+            left: "0",
+            transform: "translate(-140%, 90px)"
+          },
+
+          "&:nth-child(2)": {
+            right: "0",
+            transform: "translate(140%, 90px)"
+          }
+        }
       }
     },
     paper: {
