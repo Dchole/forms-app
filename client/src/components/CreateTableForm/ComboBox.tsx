@@ -21,7 +21,12 @@ const mapOptions = (options: { icon: JSX.Element; text: string }[]) =>
     </MenuItem>
   ));
 
-const ComboBox: React.FC<{ mobile: boolean }> = ({ mobile }) => {
+interface IComboBox {
+  mobile: boolean;
+  fieldID: string;
+}
+
+const ComboBox: React.FC<IComboBox> = ({ mobile, fieldID }) => {
   const [type, setType] = useState(fieldTypes.Text[0].text);
 
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -35,13 +40,13 @@ const ComboBox: React.FC<{ mobile: boolean }> = ({ mobile }) => {
       margin={mobile ? "none" : "normal"}
       fullWidth
     >
-      <InputLabel id="select-field-type-outlined-label">Field Type</InputLabel>
+      <InputLabel id={`select-label-${fieldID}`}>Field Type</InputLabel>
       <Select
-        name="fieldType"
+        id={`select-field-type-${fieldID}`}
+        name={`field-type-${fieldID}`}
         value={type}
         label="Field Type"
-        id="select-field-type"
-        labelId="select-field-type-label"
+        labelId={`select-field-type-label-${fieldID}`}
         onChange={handleChange}
       >
         {Object.entries(fieldTypes).map(([category, options]) => [

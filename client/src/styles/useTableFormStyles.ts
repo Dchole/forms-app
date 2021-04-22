@@ -15,6 +15,7 @@ const useTableFormStyles = makeStyles(theme =>
 
       "& .inc-dec-buttons": {
         position: "relative",
+        top: 86,
 
         "& .MuiIconButton-root": {
           border: `2px solid ${theme.palette.divider}`,

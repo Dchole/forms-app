@@ -37,7 +37,7 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
   open,
   handleClose
 }) => {
-  const { breakpoints } = useTheme();
+  const { breakpoints, transitions } = useTheme();
   const titleRef = useRef<HTMLInputElement | null>(null);
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const buttonsRef = useRef<HTMLDivElement | null>(null);
@@ -71,8 +71,8 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
     }
   };
 
-  const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
-    setFocusedField(f => ({ ...f, name: event.target.name }));
+  const handleFocus = (event: React.FocusEvent<HTMLFormElement>) => {
+    setFocusedField(f => ({ ...f, name: event.target.id }));
 
     // Check if field has value
     Boolean(event.target.value)
@@ -80,18 +80,10 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
       : setFocusedField(f => ({ ...f, filled: false }));
   };
 
-  const handleBlur = (event: React.FocusEvent<HTMLInputElement>) =>
-    setFocusedField(f => ({ name: "", filled: false }));
-
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     Boolean(event.target.value)
       ? setFocusedField(f => ({ ...f, filled: true }))
       : setFocusedField(f => ({ ...f, filled: false }));
-  };
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log(event.target);
   };
 
   useEffect(() => {
@@ -124,16 +116,18 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
             { transform: `translateY(${newButtonsRelativePosition}px)` }
           ],
           {
-            duration: 150,
-            easing: "ease-out",
+            duration: transitions.duration.shortest,
+            easing: transitions.easing.easeOut,
             fill: "forwards"
           }
         );
 
         buttonsRelativePosition.current = newButtonsRelativePosition;
+
+        if (!open) buttonsRelativePosition.current = 0.5;
       }
     }
-  }, [focusedField.name]);
+  }, [focusedField.name, transitions, open]);
 
   return (
     <Dialog
@@ -189,12 +183,12 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
               <PreviewIcon />
             </IconButton>
           </Toolbar>
-          <form onSubmit={handleSubmit}>
+          <form onFocus={handleFocus}>
             {fields.map(field => (
               <div className={classes.fields} key={field}>
                 <TextField
-                  id={field}
-                  name={field}
+                  id={`field-name-${field}`}
+                  name={`field-name-${field}`}
                   label="Field Name"
                   placeholder="ex. Full Name"
                   variant="outlined"
@@ -202,14 +196,12 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
                   margin="normal"
                   autoComplete="off"
                   autoCapitalize="word"
-                  onFocus={handleFocus}
-                  onBlur={handleBlur}
                   onChange={handleInput}
                   aria-required
                   autoFocus
                   fullWidth
                 />
-                <ComboBox mobile={mobile} />
+                <ComboBox mobile={mobile} fieldID={field} />
               </div>
             ))}
             <div className={classes.actions}>

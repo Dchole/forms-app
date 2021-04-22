@@ -1,3 +1,18 @@
+import { FormikHelpers } from "formik";
+
 export const initialValues = {
-  fields: ""
+  title: "",
+  limit: "",
+  deadline: "",
+  disabled: "",
+  fields: [""]
+};
+
+export type TValues = typeof initialValues;
+
+export const handleSubmit = (
+  values: TValues,
+  actions: FormikHelpers<TValues>
+) => {
+  console.log(values, actions);
 };
