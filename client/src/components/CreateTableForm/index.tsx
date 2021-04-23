@@ -1,25 +1,24 @@
 import React, { forwardRef, useEffect, useRef, useState } from "react";
 import { customAlphabet } from "nanoid";
 import { lowercase } from "nanoid-dictionary";
-import { Link } from "react-router-dom";
 import { useTheme } from "@material-ui/core/styles";
 import { TransitionProps } from "@material-ui/core/transitions/transition";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import Slide from "@material-ui/core/Slide";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
-import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import Paper from "@material-ui/core/Paper";
 import Input from "@material-ui/core/Input";
 import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
-import PreviewIcon from "@material-ui/icons/Visibility";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Close";
+import MoreIcon from "@material-ui/icons/MoreVert";
 import ComboBox from "./ComboBox";
 import useTableFormStyles from "../../styles/useTableFormStyles";
 import { getElement, getElementYPosition } from "../../utils/dom-queries";
+import BottomToolbar from "./BottomToolbar";
 
 interface ICreateTableFormProps {
   open: boolean;
@@ -118,12 +117,6 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
         );
 
         const displacement = focusedFieldYPosition - buttonsYPosition;
-        console.log({
-          buttonsRelativePosition: buttonsRelativePosition.current,
-          displacement,
-          buttonsYPosition,
-          focusedFieldYPosition
-        });
 
         const newButtonsRelativePosition =
           buttonsRelativePosition.current + displacement;
@@ -197,13 +190,8 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
               onFocus={() => setDisableUnderline(false)}
               onBlur={() => setDisableUnderline(true)}
             />
-            <IconButton
-              component={Link}
-              to="/preview?slug"
-              aria-label="show preview"
-              role={undefined}
-            >
-              <PreviewIcon />
+            <IconButton aria-label="more options">
+              <MoreIcon />
             </IconButton>
           </Toolbar>
           <form onFocus={handleFocus}>
@@ -227,12 +215,7 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
                 <ComboBox mobile={mobile} fieldID={field} />
               </div>
             ))}
-            <div className={classes.actions}>
-              <Button onClick={handleClose}>Cancel</Button>
-              <Button color="primary" variant="contained" type="submit">
-                Create Table
-              </Button>
-            </div>
+            <BottomToolbar handleClose={handleClose} />
           </form>
         </Paper>
       </Container>

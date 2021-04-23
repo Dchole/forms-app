@@ -76,6 +76,9 @@ const useTableFormStyles = makeStyles(theme =>
       gap: theme.spacing(2),
       justifyContent: "flex-end",
       marginTop: theme.spacing(2)
+    },
+    previewBtn: {
+      transform: "translateY(24%)"
     }
   })
 );
