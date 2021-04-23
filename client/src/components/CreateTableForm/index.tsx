@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useRef, useState } from "react";
+import React, { forwardRef, useEffect, useRef, useState } from "react";
 import { customAlphabet } from "nanoid";
 import { lowercase } from "nanoid-dictionary";
 import { Link } from "react-router-dom";
@@ -73,11 +73,19 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
 
   const handleFocus = (event: React.FocusEvent<HTMLFormElement>) => {
     setFocusedField(f => ({ ...f, name: event.target.id }));
-
     // Check if field has value
     Boolean(event.target.value)
       ? setFocusedField(f => ({ ...f, filled: true }))
       : setFocusedField(f => ({ ...f, filled: false }));
+  };
+
+  const handleClick = () => {
+    if (
+      document.activeElement?.classList.value.includes("MuiDialog") ||
+      document.activeElement?.id === "title"
+    ) {
+      setFocusedField(f => ({ ...f, name: "" }));
+    }
   };
 
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,11 +97,17 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
   useEffect(() => {
     if (focusedField.name) {
       const buttons = buttonsRef.current;
-      const focusedFieldElement = getElement<HTMLInputElement>(
-        `#${focusedField.name}`
-      );
+      const focusedFieldElement = getElement(`#${focusedField.name}`);
 
       if (buttons && focusedFieldElement && dialogRef.current) {
+        if (
+          dialogRef.current
+            .querySelector(".MuiDialog-scrollPaper")
+            ?.getAnimations()[0]?.pending
+        ) {
+          buttonsRelativePosition.current = 0;
+        }
+
         const buttonsYPosition = getElementYPosition(
           buttons,
           dialogRef.current
@@ -104,8 +118,12 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
         );
 
         const displacement = focusedFieldYPosition - buttonsYPosition;
-
-        console.log(buttonsYPosition, focusedFieldYPosition, displacement);
+        console.log({
+          buttonsRelativePosition: buttonsRelativePosition.current,
+          displacement,
+          buttonsYPosition,
+          focusedFieldYPosition
+        });
 
         const newButtonsRelativePosition =
           buttonsRelativePosition.current + displacement;
@@ -123,8 +141,6 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
         );
 
         buttonsRelativePosition.current = newButtonsRelativePosition;
-
-        if (!open) buttonsRelativePosition.current = 0.5;
       }
     }
   }, [focusedField.name, transitions, open]);
@@ -135,6 +151,7 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
       classes={{ paperFullScreen: classes.root }}
       open={open}
       onClose={handleClose}
+      onClick={handleClick}
       TransitionComponent={Transition}
       fullScreen
     >
@@ -143,7 +160,11 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
         disableGutters={mobile}
         className={classes.container}
       >
-        <div ref={buttonsRef} className="inc-dec-buttons">
+        <div
+          ref={buttonsRef}
+          className="inc-dec-buttons"
+          style={!focusedField.name ? { visibility: "hidden" } : undefined}
+        >
           <IconButton
             size="small"
             aria-label="remove field"
@@ -168,6 +189,8 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
         <Paper variant="outlined" className={classes.paper}>
           <Toolbar disableGutters>
             <Input
+              id="title"
+              name="title"
               ref={titleRef}
               defaultValue="Untitled Table"
               disableUnderline={disableUnderline}

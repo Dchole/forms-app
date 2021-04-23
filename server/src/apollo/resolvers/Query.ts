@@ -23,25 +23,21 @@ const Query: QueryResolvers<TContext> = {
     { dataSources: { tables, users } }
   ) => {
     const userID = users.getUserID();
-    const countTables = tables.countTables(userID);
 
-    const fetchedTables = tables.getTables(
+    const fetchedTables = await tables.getTables(
       userID,
       limit as number | undefined,
       page as number | undefined,
       filter
     );
 
-    const [totalCount, allTables] = await Promise.all([
-      countTables,
-      fetchedTables
-    ]);
+    const hasMore = await tables.hasMore(userID, fetchedTables);
 
-    if (!allTables) throw new ApolloError("Something went wrong");
+    if (!fetchedTables) throw new ApolloError("Something went wrong");
 
     return {
-      node: allTables,
-      hasMore: Boolean(totalCount - allTables.length)
+      node: fetchedTables,
+      hasMore
     };
   }
 };

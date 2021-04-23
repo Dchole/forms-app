@@ -27,6 +27,17 @@ class Table extends MongoDataSource<ITableSchema> {
     return { _id, fullName, data, date };
   }
 
+  async hasMore(admin: string, tables: TTable[]) {
+    const allTables = await this.model.find({ admin }).select("_id");
+    const cursor = tables[tables.length - 1];
+
+    const indexOfCursor = allTables.findIndex(
+      table => table._id.toString() === cursor._id.toString()
+    );
+
+    return indexOfCursor + 1 < allTables.length;
+  }
+
   async countTables(admin: string) {
     return this.model.find({ admin }).countDocuments();
   }
