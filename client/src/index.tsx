@@ -6,13 +6,17 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import theme from "./lib/theme";
+import DateFnsUtils from "@date-io/date-fns";
+import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
       <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <App />
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <CssBaseline />
+          <App />
+        </MuiPickersUtilsProvider>
       </ThemeProvider>
     </BrowserRouter>
   </React.StrictMode>,

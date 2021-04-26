@@ -20,6 +20,13 @@ const useTableFormStyles = makeStyles(theme =>
           border: `2px solid ${theme.palette.divider}`,
           position: "absolute",
           top: 2,
+          opacity: 1,
+          transition: `${theme.transitions.create("opacity", {
+            duration: theme.transitions.duration.shortest,
+            easing: theme.transitions.easing.easeOut
+          })}, ${theme.transitions.create("display", {
+            delay: theme.transitions.duration.shortest
+          })}`,
 
           "&:first-child": {
             left: "0",
@@ -79,6 +86,25 @@ const useTableFormStyles = makeStyles(theme =>
     },
     previewBtn: {
       transform: "translateY(24%)"
+    },
+    options: {
+      marginTop: theme.spacing(2),
+
+      "& .MuiTypography-root": {
+        display: "flex",
+        gap: theme.spacing(1),
+        marginBottom: theme.spacing(0.5),
+        alignItems: "center",
+
+        "& .values": {
+          color: theme.palette.secondary.dark,
+          fontWeight: 500
+        }
+      }
+    },
+    hideBtn: {
+      opacity: 0,
+      display: "none"
     }
   })
 );

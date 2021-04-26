@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext } from "react";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
@@ -8,6 +8,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import fieldTypes from "./fieldTypes";
+import { CreateTableContext } from "./CreateTableContext";
 
 // Had to create a function by means of avoiding the use of "Fragment"
 // because parent(Select) doesn't accept "Fragment"
@@ -24,13 +25,14 @@ const mapOptions = (options: { icon: JSX.Element; text: string }[]) =>
 interface IComboBox {
   mobile: boolean;
   fieldID: string;
+  type: string;
 }
 
-const ComboBox: React.FC<IComboBox> = ({ mobile, fieldID }) => {
-  const [type, setType] = useState(fieldTypes.Text[0].text);
+const ComboBox: React.FC<IComboBox> = ({ mobile, fieldID, type }) => {
+  const { setFieldType } = useContext(CreateTableContext);
 
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setType(event.target.value as string);
+    setFieldType(fieldID, event.target.value as string);
   };
 
   return (

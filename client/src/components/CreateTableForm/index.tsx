@@ -1,6 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useState } from "react";
-import { customAlphabet } from "nanoid";
-import { lowercase } from "nanoid-dictionary";
+import { forwardRef, useContext, useRef, useState } from "react";
 import { useTheme } from "@material-ui/core/styles";
 import { TransitionProps } from "@material-ui/core/transitions/transition";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
@@ -12,13 +10,20 @@ import Paper from "@material-ui/core/Paper";
 import Input from "@material-ui/core/Input";
 import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Close";
 import MoreIcon from "@material-ui/icons/MoreVert";
+import TimerIcon from "@material-ui/icons/Timer";
+import TargetIcon from "@material-ui/icons/MyLocation";
 import ComboBox from "./ComboBox";
-import useTableFormStyles from "../../styles/useTableFormStyles";
-import { getElement, getElementYPosition } from "../../utils/dom-queries";
 import BottomToolbar from "./BottomToolbar";
+import MoreTools from "./MoreTools";
+import { CreateTableContext } from "./CreateTableContext";
+import useTableFormStyles from "../../styles/useTableFormStyles";
+import usePositionButtons from "../../hooks/usePositionButtons";
+import { getElement } from "../../utils/dom-queries";
+import getIdFromFieldId from "../../utils/get-id-from-field-id";
 
 interface ICreateTableFormProps {
   open: boolean;
@@ -36,43 +41,58 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
   open,
   handleClose
 }) => {
-  const { breakpoints, transitions } = useTheme();
-  const titleRef = useRef<HTMLInputElement | null>(null);
-  const dialogRef = useRef<HTMLDivElement | null>(null);
-  const buttonsRef = useRef<HTMLDivElement | null>(null);
-  const buttonsRelativePosition = useRef<number>(0);
+  const { breakpoints } = useTheme();
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const buttonsRef = useRef<HTMLDivElement>(null);
   const mobile = useMediaQuery(breakpoints.down("xs"));
   const classes = useTableFormStyles();
 
-  const nanoid = customAlphabet(lowercase, 10);
-  const [fields, setFields] = useState([nanoid()]);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [disableUnderline, setDisableUnderline] = useState(true);
   const [focusedField, setFocusedField] = useState({ name: "", filled: false });
 
-  const addField = () => {
-    setFields(f => [...f, nanoid()]);
+  const { values, setTitle, setFieldName, addField, removeField } = useContext(
+    CreateTableContext
+  );
+
+  usePositionButtons({ focusedField, buttonsRef, dialogRef });
+
+  const handleAddField = () => {
+    addField(getIdFromFieldId(focusedField.name));
   };
 
-  const removeField = () => {
-    if (fields.length > 1) {
-      const copyFields = fields.filter(field => field !== focusedField.name);
+  const handleRemoveField = () => {
+    const id = getIdFromFieldId(focusedField.name);
 
-      setFields(copyFields);
+    const fieldContainer = getElement(`#${id}`);
 
-      const lastField = copyFields[copyFields.length - 1];
+    values.fields.length > 1 && removeField(id);
 
-      setFocusedField(f => ({
-        ...f,
-        name: lastField
-      }));
+    fieldContainer?.previousElementSibling
+      ?.querySelector<HTMLInputElement>("input")
+      ?.focus();
 
-      getElement<HTMLInputElement>(`#${lastField}`)?.focus();
-    }
+    fieldContainer?.nextElementSibling
+      ?.querySelector<HTMLInputElement>("input")
+      ?.focus();
   };
+
+  const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>) =>
+    setAnchorEl(event.currentTarget);
+
+  const handleCloseMenu = () => setAnchorEl(null);
 
   const handleFocus = (event: React.FocusEvent<HTMLFormElement>) => {
     setFocusedField(f => ({ ...f, name: event.target.id }));
     // Check if field has value
+    Boolean(event.target.value)
+      ? setFocusedField(f => ({ ...f, filled: true }))
+      : setFocusedField(f => ({ ...f, filled: false }));
+  };
+
+  const handleInput = (event: React.ChangeEvent<HTMLFormElement>) => {
+    setFieldName(getIdFromFieldId(event.target.id), event.target.value);
+
     Boolean(event.target.value)
       ? setFocusedField(f => ({ ...f, filled: true }))
       : setFocusedField(f => ({ ...f, filled: false }));
@@ -86,57 +106,6 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
       setFocusedField(f => ({ ...f, name: "" }));
     }
   };
-
-  const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    Boolean(event.target.value)
-      ? setFocusedField(f => ({ ...f, filled: true }))
-      : setFocusedField(f => ({ ...f, filled: false }));
-  };
-
-  useEffect(() => {
-    if (focusedField.name) {
-      const buttons = buttonsRef.current;
-      const focusedFieldElement = getElement(`#${focusedField.name}`);
-
-      if (buttons && focusedFieldElement && dialogRef.current) {
-        if (
-          dialogRef.current
-            .querySelector(".MuiDialog-scrollPaper")
-            ?.getAnimations()[0]?.pending
-        ) {
-          buttonsRelativePosition.current = 0;
-        }
-
-        const buttonsYPosition = getElementYPosition(
-          buttons,
-          dialogRef.current
-        );
-        const focusedFieldYPosition = getElementYPosition(
-          focusedFieldElement,
-          dialogRef.current
-        );
-
-        const displacement = focusedFieldYPosition - buttonsYPosition;
-
-        const newButtonsRelativePosition =
-          buttonsRelativePosition.current + displacement;
-
-        buttons.animate(
-          [
-            { transform: `translateY(${buttonsRelativePosition.current}px)` },
-            { transform: `translateY(${newButtonsRelativePosition}px)` }
-          ],
-          {
-            duration: transitions.duration.shortest,
-            easing: transitions.easing.easeOut,
-            fill: "forwards"
-          }
-        );
-
-        buttonsRelativePosition.current = newButtonsRelativePosition;
-      }
-    }
-  }, [focusedField.name, transitions, open]);
 
   return (
     <Dialog
@@ -161,20 +130,15 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
           <IconButton
             size="small"
             aria-label="remove field"
-            onClick={removeField}
-            style={
-              fields.length > 1 && focusedField
-                ? undefined
-                : { visibility: "hidden" }
-            }
+            onClick={handleRemoveField}
           >
             <RemoveIcon />
           </IconButton>
           <IconButton
             size="small"
             aria-label="add new field"
-            onClick={addField}
-            style={focusedField.filled ? undefined : { visibility: "hidden" }}
+            onClick={handleAddField}
+            className={!focusedField.filled ? classes.hideBtn : undefined}
           >
             <AddIcon />
           </IconButton>
@@ -184,40 +148,61 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
             <Input
               id="title"
               name="title"
-              ref={titleRef}
-              defaultValue="Untitled Table"
+              value={values.title}
               disableUnderline={disableUnderline}
+              onChange={event => setTitle(event.target.value)}
               onFocus={() => setDisableUnderline(false)}
               onBlur={() => setDisableUnderline(true)}
             />
-            <IconButton aria-label="more options">
+            <IconButton aria-label="more options" onClick={handleOpenMenu}>
               <MoreIcon />
             </IconButton>
+            <MoreTools anchorEl={anchorEl} handleClose={handleCloseMenu} />
           </Toolbar>
-          <form onFocus={handleFocus}>
-            {fields.map(field => (
-              <div className={classes.fields} key={field}>
+          <form onFocus={handleFocus} onChange={handleInput}>
+            {values.fields.map(({ id, name, type }) => (
+              <div id={id} className={classes.fields} key={id}>
                 <TextField
-                  id={`field-name-${field}`}
-                  name={`field-name-${field}`}
+                  id={`field-name-${id}`}
+                  name={`field-name-${id}`}
                   label="Field Name"
+                  value={name}
                   placeholder="ex. Full Name"
                   variant="outlined"
                   size="small"
                   margin="normal"
                   autoComplete="off"
                   autoCapitalize="word"
-                  onChange={handleInput}
                   aria-required
                   autoFocus
                   fullWidth
                 />
-                <ComboBox mobile={mobile} fieldID={field} />
+                <ComboBox type={type} fieldID={id} mobile={mobile} />
               </div>
             ))}
             <BottomToolbar handleClose={handleClose} />
           </form>
         </Paper>
+        <div className={classes.options}>
+          {values.deadline && (
+            <Typography variant="caption" component="p">
+              <TimerIcon fontSize="small" color="action" />
+              <span>
+                Deadline set to&nbsp;
+                <span className="values">{values.deadline}</span>
+              </span>
+            </Typography>
+          )}
+          {values.limit && (
+            <Typography variant="caption" component="p">
+              <TargetIcon fontSize="small" color="action" />
+              <span>
+                Target set to&nbsp;
+                <span className="values">{values.limit}</span>
+              </span>
+            </Typography>
+          )}
+        </div>
       </Container>
     </Dialog>
   );

@@ -7,6 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import Fab from "@material-ui/core/Fab";
 import HelpIcon from "@material-ui/icons/HelpOutline";
 import useHomeStyles from "../styles/useHomeStyles";
+import CreateTableProvider from "../components/CreateTableForm/CreateTableContext";
 
 const CreateTableForm = lazy(() => import("../components/CreateTableForm"));
 
@@ -42,7 +43,9 @@ const Homepage = () => {
           <HelpIcon />
         </Fab>
       </Container>
-      <CreateTableForm open={open} handleClose={handleClose} />
+      <CreateTableProvider>
+        <CreateTableForm open={open} handleClose={handleClose} />
+      </CreateTableProvider>
     </Layout>
   );
 };
