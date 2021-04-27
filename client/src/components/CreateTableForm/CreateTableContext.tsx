@@ -1,4 +1,5 @@
 import { createContext, useReducer } from "react";
+import { insertNewTable } from "../../db/tables";
 import reducer, { initialState, IValues } from "./Reducer";
 
 interface ICreateTableContext {
@@ -73,10 +74,10 @@ const CreateTableProvider: React.FC = ({ children }) => {
     });
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    console.log(values);
+    const tables = await insertNewTable(values);
+    console.log(tables);
   };
 
   return (

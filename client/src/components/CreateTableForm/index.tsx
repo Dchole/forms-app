@@ -51,9 +51,14 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
   const [disableUnderline, setDisableUnderline] = useState(true);
   const [focusedField, setFocusedField] = useState({ name: "", filled: false });
 
-  const { values, setTitle, setFieldName, addField, removeField } = useContext(
-    CreateTableContext
-  );
+  const {
+    values,
+    setTitle,
+    setFieldName,
+    addField,
+    removeField,
+    handleSubmit
+  } = useContext(CreateTableContext);
 
   usePositionButtons({ focusedField, buttonsRef, dialogRef });
 
@@ -159,7 +164,11 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
             </IconButton>
             <MoreTools anchorEl={anchorEl} handleClose={handleCloseMenu} />
           </Toolbar>
-          <form onFocus={handleFocus} onChange={handleInput}>
+          <form
+            onFocus={handleFocus}
+            onChange={handleInput}
+            onSubmit={handleSubmit}
+          >
             {values.fields.map(({ id, name, type }) => (
               <div id={id} className={classes.fields} key={id}>
                 <TextField
