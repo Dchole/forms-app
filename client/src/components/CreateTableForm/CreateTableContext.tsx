@@ -1,5 +1,6 @@
-import { createContext, useReducer } from "react";
-import { insertNewTable } from "../../db/tables";
+import { createContext, useEffect, useReducer, useState } from "react";
+import Draft from "../../db/drafts";
+import Table from "../../db/tables";
 import reducer, { initialState, IValues } from "./Reducer";
 
 interface ICreateTableContext {
@@ -18,6 +19,20 @@ export const CreateTableContext = createContext({} as ICreateTableContext);
 
 const CreateTableProvider: React.FC = ({ children }) => {
   const [values, dispatch] = useReducer(reducer, initialState);
+  const [draftKey, setDraftKey] = useState("");
+
+  useEffect(() => {
+    (async () => {
+      const draft = new Draft();
+
+      if (draftKey) {
+        await draft.updateDraft(draftKey, values);
+      } else {
+        const key = await draft.saveDraft(values);
+        setDraftKey(key);
+      }
+    })();
+  }, [values, draftKey]);
 
   const setTitle = (title: string) => {
     dispatch({
@@ -76,8 +91,13 @@ const CreateTableProvider: React.FC = ({ children }) => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const tables = await insertNewTable(values);
-    console.log(tables);
+
+    try {
+      new Table().createTable(values);
+    } catch (error) {
+      console.log(error);
+    } finally {
+    }
   };
 
   return (

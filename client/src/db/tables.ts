@@ -1,12 +1,16 @@
 import { IValues } from "../components/CreateTableForm/Reducer";
-import db from "./init";
+import Db from "./init";
 
-const tables = db.collection("tables");
+class Table extends Db {
+  private collection = this.database.collection("tables");
 
-export const getAllTables = async () => {
-  return tables.find({});
-};
+  public get tables() {
+    return this.collection.get();
+  }
 
-export const insertNewTable = async (values: IValues) => {
-  return tables.insert(values).then(() => tables.find({}));
-};
+  async createTable(values: IValues) {
+    return this.collection.add(values);
+  }
+}
+
+export default Table;
