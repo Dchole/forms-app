@@ -1,0 +1,14 @@
+query GetDrafts {
+  drafts @client {
+    node {
+      title
+      target
+      deadline
+      fields {
+        _id
+        name
+        type
+      }
+    }
+  }
+}

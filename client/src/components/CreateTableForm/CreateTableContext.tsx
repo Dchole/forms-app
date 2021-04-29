@@ -6,10 +6,10 @@ import reducer, { initialState, IValues } from "./Reducer";
 interface ICreateTableContext {
   values: IValues;
   setTitle: (title: string) => void;
-  addField: (id: string) => void;
-  setFieldName: (id: string, name: string) => void;
-  setFieldType: (id: string, type: string) => void;
-  removeField: (id: string) => void;
+  addField: (_id: string) => void;
+  setFieldName: (_id: string, name: string) => void;
+  setFieldType: (_id: string, type: string) => void;
+  removeField: (_id: string) => void;
   setDeadline: (date?: string) => void;
   setTarget: (target?: number) => void;
   handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
@@ -41,35 +41,35 @@ const CreateTableProvider: React.FC = ({ children }) => {
     });
   };
 
-  const addField = (id: string) => {
+  const addField = (_id: string) => {
     dispatch({
       type: "ADD_FIELD",
-      payload: id
+      payload: _id
     });
   };
 
-  const removeField = (id: string) => {
+  const removeField = (_id: string) => {
     dispatch({
       type: "REMOVE_FIELD",
-      payload: id
+      payload: _id
     });
   };
 
-  const setFieldName = (id: string, name: string) => {
+  const setFieldName = (_id: string, name: string) => {
     dispatch({
       type: "SET_FIELD_NAME",
       payload: {
-        id,
+        _id,
         name
       }
     });
   };
 
-  const setFieldType = (id: string, type: string) => {
+  const setFieldType = (_id: string, type: string) => {
     dispatch({
       type: "SET_FIELD_TYPE",
       payload: {
-        id,
+        _id,
         type
       }
     });

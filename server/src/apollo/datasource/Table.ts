@@ -16,8 +16,8 @@ class Table extends MongoDataSource<ITableSchema> {
   tableReducer(table?: ITableSchema | null): TTable {
     if (!table) throw new Error("Something went wrong!");
 
-    const { _id, title, fields, disabled, deadline, rows, limit } = table;
-    return { _id, title, fields, disabled, deadline, rows, limit };
+    const { _id, title, fields, disabled, deadline, rows, target } = table;
+    return { _id, title, fields, disabled, deadline, rows, target };
   }
 
   rowReducer(row?: Maybe<IRow>): Row {

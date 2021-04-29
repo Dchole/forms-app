@@ -3,14 +3,14 @@ import { lowercase } from "nanoid-dictionary";
 import fieldTypes from "../CreateTableForm/fieldTypes";
 
 interface IField {
-  id: string;
+  _id: string;
   name: string;
   type: string;
 }
 
 export interface IValues {
   title: string;
-  limit?: number;
+  target?: number;
   deadline?: string;
   fields: IField[];
 }
@@ -24,9 +24,9 @@ const defaultField = {
 
 export const initialState: IValues = {
   title: "Untitled Table",
-  limit: undefined,
+  target: undefined,
   deadline: undefined,
-  fields: [{ id: nanoid(), ...defaultField }]
+  fields: [{ _id: nanoid(), ...defaultField }]
 };
 
 export type TAction =
@@ -34,8 +34,8 @@ export type TAction =
   | { type: "SET_DEADLINE"; payload?: string }
   | { type: "SET_TARGET"; payload?: number }
   | { type: "ADD_FIELD"; payload: string }
-  | { type: "SET_FIELD_NAME"; payload: { id: string; name: string } }
-  | { type: "SET_FIELD_TYPE"; payload: { id: string; type: string } }
+  | { type: "SET_FIELD_NAME"; payload: { _id: string; name: string } }
+  | { type: "SET_FIELD_TYPE"; payload: { _id: string; type: string } }
   | { type: "REMOVE_FIELD"; payload: string };
 
 const reducer = (state = initialState, { type, payload }: TAction) => {
@@ -59,13 +59,13 @@ const reducer = (state = initialState, { type, payload }: TAction) => {
       const copyFields = [...state.fields];
 
       const activeField = copyFields.find(
-        field => field.id === payload
+        field => field._id === payload
       ) as IField;
 
       const position = copyFields.indexOf(activeField);
 
       copyFields.splice(position, 1, activeField, {
-        id: nanoid(),
+        _id: nanoid(),
         ...defaultField
       });
 
@@ -73,9 +73,9 @@ const reducer = (state = initialState, { type, payload }: TAction) => {
 
     case "SET_FIELD_NAME":
       const setFields = state.fields.map(field => {
-        const fieldToUpdate = payload as { id: string; name: string };
+        const fieldToUpdate = payload as { _id: string; name: string };
 
-        return field.id === fieldToUpdate.id
+        return field._id === fieldToUpdate._id
           ? { ...field, name: fieldToUpdate.name }
           : field;
       });
@@ -84,9 +84,9 @@ const reducer = (state = initialState, { type, payload }: TAction) => {
 
     case "SET_FIELD_TYPE":
       const setTypes = state.fields.map(field => {
-        const fieldToUpdate = payload as { id: string; type: string };
+        const fieldToUpdate = payload as { _id: string; type: string };
 
-        return field.id === fieldToUpdate.id
+        return field._id === fieldToUpdate._id
           ? { ...field, type: fieldToUpdate.type }
           : field;
       });
@@ -94,7 +94,7 @@ const reducer = (state = initialState, { type, payload }: TAction) => {
       return { ...state, fields: setTypes };
 
     case "REMOVE_FIELD":
-      const remainingFields = state.fields.filter(({ id }) => id !== payload);
+      const remainingFields = state.fields.filter(({ _id }) => _id !== payload);
 
       return { ...state, fields: remainingFields };
 

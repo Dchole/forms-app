@@ -132,7 +132,7 @@ export type UpdateInput = {
 
 export type TableInput = {
   title: Scalars['String'];
-  limit?: Maybe<Scalars['Int']>;
+  target?: Maybe<Scalars['Int']>;
   deadline?: Maybe<Scalars['String']>;
   disabled?: Maybe<Scalars['Boolean']>;
   fields: Array<FieldInput>;
@@ -185,7 +185,7 @@ export type Table = {
   __typename?: 'Table';
   _id: Scalars['ID'];
   title: Scalars['String'];
-  limit?: Maybe<Scalars['Int']>;
+  target?: Maybe<Scalars['Int']>;
   deadline?: Maybe<Scalars['String']>;
   fields: Array<Field>;
   rows: Array<Row>;
@@ -443,7 +443,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 export type TableResolvers<ContextType = any, ParentType extends ResolversParentTypes['Table'] = ResolversParentTypes['Table']> = {
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  limit?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  target?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   deadline?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   fields?: Resolver<Array<ResolversTypes['Field']>, ParentType, ContextType>;
   rows?: Resolver<Array<ResolversTypes['Row']>, ParentType, ContextType>;

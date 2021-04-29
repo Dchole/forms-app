@@ -169,11 +169,11 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
             onChange={handleInput}
             onSubmit={handleSubmit}
           >
-            {values.fields.map(({ id, name, type }) => (
-              <div id={id} className={classes.fields} key={id}>
+            {values.fields.map(({ _id, name, type }) => (
+              <div id={_id} className={classes.fields} key={_id}>
                 <TextField
-                  id={`field-name-${id}`}
-                  name={`field-name-${id}`}
+                  id={`field-name-${_id}`}
+                  name={`field-name-${_id}`}
                   label="Field Name"
                   value={name}
                   placeholder="ex. Full Name"
@@ -186,7 +186,7 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
                   autoFocus
                   fullWidth
                 />
-                <ComboBox type={type} fieldID={id} mobile={mobile} />
+                <ComboBox type={type} fieldID={_id} mobile={mobile} />
               </div>
             ))}
             <BottomToolbar handleClose={handleClose} />
@@ -202,12 +202,12 @@ const CreateTableForm: React.FC<ICreateTableFormProps> = ({
               </span>
             </Typography>
           )}
-          {values.limit && (
+          {values.target && (
             <Typography variant="caption" component="p">
               <TargetIcon fontSize="small" color="action" />
               <span>
                 Target set to&nbsp;
-                <span className="values">{values.limit}</span>
+                <span className="values">{values.target}</span>
               </span>
             </Typography>
           )}

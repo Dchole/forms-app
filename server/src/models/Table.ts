@@ -21,7 +21,7 @@ export interface IRow extends Document {
 
 export interface ITableSchema extends Document {
   title: string;
-  limit?: number;
+  target?: number;
   deadline?: string;
   disabled: boolean;
   fields: IField[];
@@ -35,7 +35,7 @@ const TableSchema = new Schema(
       type: String,
       required: true
     },
-    limit: {
+    target: {
       type: Number
     },
     deadline: {
