@@ -35,8 +35,14 @@ const resolvers: Resolvers = {
     async saveDraft(_, { values }, { cache }) {
       const data = cache.readQuery({ query: GetDraftsDocument });
 
+      const draft: DraftData = values;
+
       const key = await new Draft().saveDraft(values);
-      const newDraft = { ...values, key, __typename: "Draft" };
+
+      draft.__typename = "DraftData";
+      draft.fields.map(field => (field.__typename = "Field"));
+
+      const newDraft = { data: values, key, __typename: "Draft" };
 
       data &&
         cache.writeQuery({
