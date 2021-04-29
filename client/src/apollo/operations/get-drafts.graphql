@@ -1,6 +1,7 @@
 query GetDrafts {
   drafts @client {
-    node {
+    key
+    data {
       title
       target
       deadline

@@ -5,11 +5,11 @@ class Draft extends Db {
   private collection = this.database.collection("drafts");
 
   async getDrafts() {
-    return this.collection.get();
+    return this.collection.get({ keys: true });
   }
 
   async getDraft(key: string) {
-    return this.collection.get().doc(key);
+    return this.collection.doc(key).get();
   }
 
   async saveDraft(values: IValues): Promise<string> {

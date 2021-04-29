@@ -28,16 +28,16 @@ export type DeleteRowInput = {
 
 export type Draft = {
   __typename?: 'Draft';
+  key: Scalars['String'];
+  data: DraftData;
+};
+
+export type DraftData = {
+  __typename?: 'DraftData';
   title: Scalars['String'];
   target?: Maybe<Scalars['Int']>;
   deadline?: Maybe<Scalars['String']>;
   fields: Array<Field>;
-};
-
-export type DraftConnection = {
-  __typename?: 'DraftConnection';
-  node: Array<Draft>;
-  hasMore: Scalars['Boolean'];
 };
 
 export enum EFields {
@@ -80,7 +80,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   addRow: Row;
   createTable: Table;
-  deleteDraft: Scalars['String'];
+  deleteDraft?: Maybe<Scalars['String']>;
   deleteRow: Row;
   deleteTable: Scalars['Boolean'];
   editRow: Row;
@@ -157,7 +157,7 @@ export type Query = {
   __typename?: 'Query';
   currentUser: User;
   draft: Draft;
-  drafts: DraftConnection;
+  drafts: Array<Draft>;
   table: Table;
   tables: TableConnection;
 };
@@ -275,11 +275,15 @@ export type GetDraftQuery = (
   { __typename?: 'Query' }
   & { draft: (
     { __typename?: 'Draft' }
-    & Pick<Draft, 'title' | 'target' | 'deadline'>
-    & { fields: Array<(
-      { __typename?: 'Field' }
-      & Pick<Field, '_id' | 'name' | 'type'>
-    )> }
+    & Pick<Draft, 'key'>
+    & { data: (
+      { __typename?: 'DraftData' }
+      & Pick<DraftData, 'title' | 'target' | 'deadline'>
+      & { fields: Array<(
+        { __typename?: 'Field' }
+        & Pick<Field, '_id' | 'name' | 'type'>
+      )> }
+    ) }
   ) }
 );
 
@@ -288,17 +292,18 @@ export type GetDraftsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetDraftsQuery = (
   { __typename?: 'Query' }
-  & { drafts: (
-    { __typename?: 'DraftConnection' }
-    & { node: Array<(
-      { __typename?: 'Draft' }
-      & Pick<Draft, 'title' | 'target' | 'deadline'>
+  & { drafts: Array<(
+    { __typename?: 'Draft' }
+    & Pick<Draft, 'key'>
+    & { data: (
+      { __typename?: 'DraftData' }
+      & Pick<DraftData, 'title' | 'target' | 'deadline'>
       & { fields: Array<(
         { __typename?: 'Field' }
         & Pick<Field, '_id' | 'name' | 'type'>
       )> }
-    )> }
-  ) }
+    ) }
+  )> }
 );
 
 export type SaveDraftMutationVariables = Exact<{
@@ -311,17 +316,31 @@ export type SaveDraftMutation = (
   & Pick<Mutation, 'saveDraft'>
 );
 
+export type UpdateDraftMutationVariables = Exact<{
+  key: Scalars['String'];
+  values: TableInput;
+}>;
+
+
+export type UpdateDraftMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'updateDraft'>
+);
+
 
 export const GetDraftDocument = gql`
     query GetDraft($key: String!) {
   draft(key: $key) @client {
-    title
-    target
-    deadline
-    fields {
-      _id
-      name
-      type
+    key @export(as: _id)
+    data {
+      title
+      target
+      deadline
+      fields {
+        _id
+        name
+        type
+      }
     }
   }
 }
@@ -357,7 +376,8 @@ export type GetDraftQueryResult = Apollo.QueryResult<GetDraftQuery, GetDraftQuer
 export const GetDraftsDocument = gql`
     query GetDrafts {
   drafts @client {
-    node {
+    key @export(as: _id)
+    data {
       title
       target
       deadline
@@ -428,17 +448,49 @@ export function useSaveDraftMutation(baseOptions?: Apollo.MutationHookOptions<Sa
 export type SaveDraftMutationHookResult = ReturnType<typeof useSaveDraftMutation>;
 export type SaveDraftMutationResult = Apollo.MutationResult<SaveDraftMutation>;
 export type SaveDraftMutationOptions = Apollo.BaseMutationOptions<SaveDraftMutation, SaveDraftMutationVariables>;
-export type DraftKeySpecifier = ('title' | 'target' | 'deadline' | 'fields' | DraftKeySpecifier)[];
+export const UpdateDraftDocument = gql`
+    mutation UpdateDraft($key: String!, $values: TableInput!) {
+  updateDraft(key: $key, values: $values) @client
+}
+    `;
+export type UpdateDraftMutationFn = Apollo.MutationFunction<UpdateDraftMutation, UpdateDraftMutationVariables>;
+
+/**
+ * __useUpdateDraftMutation__
+ *
+ * To run a mutation, you first call `useUpdateDraftMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateDraftMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateDraftMutation, { data, loading, error }] = useUpdateDraftMutation({
+ *   variables: {
+ *      key: // value for 'key'
+ *      values: // value for 'values'
+ *   },
+ * });
+ */
+export function useUpdateDraftMutation(baseOptions?: Apollo.MutationHookOptions<UpdateDraftMutation, UpdateDraftMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateDraftMutation, UpdateDraftMutationVariables>(UpdateDraftDocument, options);
+      }
+export type UpdateDraftMutationHookResult = ReturnType<typeof useUpdateDraftMutation>;
+export type UpdateDraftMutationResult = Apollo.MutationResult<UpdateDraftMutation>;
+export type UpdateDraftMutationOptions = Apollo.BaseMutationOptions<UpdateDraftMutation, UpdateDraftMutationVariables>;
+export type DraftKeySpecifier = ('key' | 'data' | DraftKeySpecifier)[];
 export type DraftFieldPolicy = {
+	key?: FieldPolicy<any> | FieldReadFunction<any>,
+	data?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type DraftDataKeySpecifier = ('title' | 'target' | 'deadline' | 'fields' | DraftDataKeySpecifier)[];
+export type DraftDataFieldPolicy = {
 	title?: FieldPolicy<any> | FieldReadFunction<any>,
 	target?: FieldPolicy<any> | FieldReadFunction<any>,
 	deadline?: FieldPolicy<any> | FieldReadFunction<any>,
 	fields?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type DraftConnectionKeySpecifier = ('node' | 'hasMore' | DraftConnectionKeySpecifier)[];
-export type DraftConnectionFieldPolicy = {
-	node?: FieldPolicy<any> | FieldReadFunction<any>,
-	hasMore?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type FieldKeySpecifier = ('_id' | 'name' | 'type' | FieldKeySpecifier)[];
 export type FieldFieldPolicy = {
@@ -520,9 +572,9 @@ export type TypedTypePolicies = TypePolicies & {
 		keyFields?: false | DraftKeySpecifier | (() => undefined | DraftKeySpecifier),
 		fields?: DraftFieldPolicy,
 	},
-	DraftConnection?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | DraftConnectionKeySpecifier | (() => undefined | DraftConnectionKeySpecifier),
-		fields?: DraftConnectionFieldPolicy,
+	DraftData?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | DraftDataKeySpecifier | (() => undefined | DraftDataKeySpecifier),
+		fields?: DraftDataFieldPolicy,
 	},
 	Field?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | FieldKeySpecifier | (() => undefined | FieldKeySpecifier),

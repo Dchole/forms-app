@@ -1,14 +1,34 @@
 import { Resolvers } from "@apollo/client";
 import Draft from "../db/drafts";
-import { GetDraftDocument, GetDraftsDocument } from "./generated/graphql";
+import {
+  Draft as TDraft,
+  DraftData,
+  GetDraftDocument,
+  GetDraftsDocument,
+  SaveDraftDocument
+} from "./generated/graphql";
 
 const resolvers: Resolvers = {
   Query: {
     async draft(_, { key }) {
-      return new Draft().getDraft(key);
+      const data: DraftData = await new Draft().getDraft(key);
+      data.__typename = "DraftData";
+      data.fields.map(field => (field.__typename = "Field"));
+
+      const draft = { key, data, __typename: "Draft" };
+
+      return draft;
     },
     async drafts() {
-      return new Draft().getDrafts();
+      const drafts: TDraft[] = await new Draft().getDrafts();
+
+      return drafts.map(draft => {
+        draft.__typename = "Draft";
+        draft.data.__typename = "DraftData";
+        draft.data.fields.map(field => (field.__typename = "Field"));
+
+        return draft;
+      });
     }
   },
   Mutation: {
@@ -16,11 +36,11 @@ const resolvers: Resolvers = {
       const data = cache.readQuery({ query: GetDraftsDocument });
 
       const key = await new Draft().saveDraft(values);
+      const newDraft = { ...values, key, __typename: "Draft" };
 
       data &&
         cache.writeQuery({
-          query: GetDraftsDocument,
-          data: { drafts: [...data.drafts, values] }
+          data: { query: SaveDraftDocument, drafts: [...data.drafts, newDraft] }
         });
 
       return key;
