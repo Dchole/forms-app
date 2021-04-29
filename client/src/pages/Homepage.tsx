@@ -1,4 +1,4 @@
-import { lazy, useState } from "react";
+import { lazy, useRef, useState } from "react";
 import Layout from "../components/Layout";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
@@ -8,15 +8,30 @@ import Fab from "@material-ui/core/Fab";
 import HelpIcon from "@material-ui/icons/HelpOutline";
 import useHomeStyles from "../styles/useHomeStyles";
 import CreateTableProvider from "../components/CreateTableForm/CreateTableContext";
+import { useHistory } from "react-router-dom";
+import generateId from "../utils/generate-id";
+import Dialog from "../components/CreateTableForm/Dialog";
 
 const CreateTableForm = lazy(() => import("../components/CreateTableForm"));
 
 const Homepage = () => {
+  const draftId = useRef(generateId());
+  const { goBack } = useHistory();
   const classes = useHomeStyles();
   const [open, setOpen] = useState(false);
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleOpen = () => {
+    window.history.pushState(
+      "homepage",
+      "prevPage",
+      `/create-form/${draftId.current}`
+    );
+    setOpen(true);
+  };
+  const handleClose = () => {
+    goBack();
+    setOpen(false);
+  };
 
   return (
     <Layout>
@@ -44,7 +59,9 @@ const Homepage = () => {
         </Fab>
       </Container>
       <CreateTableProvider>
-        <CreateTableForm open={open} handleClose={handleClose} />
+        <Dialog open={open} handleClose={handleClose}>
+          <CreateTableForm />
+        </Dialog>
       </CreateTableProvider>
     </Layout>
   );

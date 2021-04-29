@@ -4,11 +4,7 @@ import IconButton from "@material-ui/core/IconButton";
 import PreviewIcon from "@material-ui/icons/Visibility";
 import useTableFormStyles from "../../styles/useTableFormStyles";
 
-interface IBottomToolbarProps {
-  handleClose: () => void;
-}
-
-const BottomToolbar: React.FC<IBottomToolbarProps> = ({ handleClose }) => {
+const BottomToolbar = () => {
   const classes = useTableFormStyles();
 
   return (
@@ -17,7 +13,7 @@ const BottomToolbar: React.FC<IBottomToolbarProps> = ({ handleClose }) => {
         <PreviewIcon />
       </IconButton>
       <div className={classes.actions}>
-        <Button onClick={handleClose}>Cancel</Button>
+        <Button>Cancel</Button>
         <Button color="primary" variant="contained" type="submit">
           Create Table
         </Button>

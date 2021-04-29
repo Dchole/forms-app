@@ -7,8 +7,10 @@ import { withQuicklink } from "quicklink/dist/react/hoc.js";
 import Homepage from "./pages/Homepage";
 import PageLoader from "./components/PageLoader";
 
-const Register = lazy(() => import("./pages/Register"));
 const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
+const Table = lazy(() => import("./pages/Table"));
+const CreateForm = lazy(() => import("./pages/CreateForm"));
 
 const App = () => {
   return (
@@ -17,6 +19,11 @@ const App = () => {
         <Route path="/" component={Homepage} exact />
         <Route path="/login" component={withQuicklink(Login)} />
         <Route path="/register" component={withQuicklink(Register)} />
+        <Route path="/table/:tableId" component={withQuicklink(Table)} />
+        <Route
+          path="/create-form/:draftId"
+          component={withQuicklink(CreateForm)}
+        />
       </Suspense>
     </Switch>
   );
