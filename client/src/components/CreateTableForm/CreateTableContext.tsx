@@ -1,4 +1,5 @@
 import { createContext, useEffect, useReducer, useState } from "react";
+import { EFields, useSaveDraftMutation } from "../../apollo/generated/graphql";
 import Draft from "../../db/drafts";
 import Table from "../../db/tables";
 import reducer, { initialState, IValues } from "./Reducer";
@@ -8,7 +9,7 @@ interface ICreateTableContext {
   setTitle: (title: string) => void;
   addField: (_id: string) => void;
   setFieldName: (_id: string, name: string) => void;
-  setFieldType: (_id: string, type: string) => void;
+  setFieldType: (_id: string, type: EFields) => void;
   removeField: (_id: string) => void;
   setDeadline: (date?: string) => void;
   setTarget: (target?: number) => void;
@@ -20,6 +21,7 @@ export const CreateTableContext = createContext({} as ICreateTableContext);
 const CreateTableProvider: React.FC = ({ children }) => {
   const [values, dispatch] = useReducer(reducer, initialState);
   const [draftKey, setDraftKey] = useState("");
+  const [saveDraft] = useSaveDraftMutation();
 
   useEffect(() => {
     (async () => {
@@ -28,11 +30,11 @@ const CreateTableProvider: React.FC = ({ children }) => {
       if (draftKey) {
         await draft.updateDraft(draftKey, values);
       } else {
-        const key = await draft.saveDraft(values);
-        setDraftKey(key);
+        const { data } = await saveDraft({ variables: { values } });
+        data && setDraftKey(data.saveDraft);
       }
     })();
-  }, [values, draftKey]);
+  }, [values, draftKey, saveDraft]);
 
   const setTitle = (title: string) => {
     dispatch({
@@ -65,7 +67,7 @@ const CreateTableProvider: React.FC = ({ children }) => {
     });
   };
 
-  const setFieldType = (_id: string, type: string) => {
+  const setFieldType = (_id: string, type: EFields) => {
     dispatch({
       type: "SET_FIELD_TYPE",
       payload: {

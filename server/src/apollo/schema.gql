@@ -124,10 +124,13 @@ type TableConnection {
 }
 
 enum EFields {
-  TEXT
+  SHORT_TEXT
   LONG_TEXT
   NUMBER
   BOOLEAN
-  SINGLE_CHOICE
+  SELECT_ONE
   MULTIPLE_SELECT
+  TIME
+  DATE
+  TIME_DATE
 }

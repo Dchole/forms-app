@@ -11,6 +11,7 @@ import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import typeDefs from "./apollo/type-defs";
 import typePolicies from "./apollo/type-policies";
+import resolvers from "./apollo/resolvers";
 
 const client = new ApolloClient({
   cache: new InMemoryCache({ typePolicies }),
@@ -18,7 +19,8 @@ const client = new ApolloClient({
     process.env.NODE_ENV === "production"
       ? process.env.REMOTE_SERVER
       : process.env.LOCAL_SERVER,
-  typeDefs
+  typeDefs,
+  resolvers
 });
 
 ReactDOM.render(

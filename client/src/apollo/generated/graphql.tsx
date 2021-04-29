@@ -41,12 +41,15 @@ export type DraftConnection = {
 };
 
 export enum EFields {
-  Text = 'TEXT',
+  ShortText = 'SHORT_TEXT',
   LongText = 'LONG_TEXT',
   Number = 'NUMBER',
   Boolean = 'BOOLEAN',
-  SingleChoice = 'SINGLE_CHOICE',
-  MultipleSelect = 'MULTIPLE_SELECT'
+  SelectOne = 'SELECT_ONE',
+  MultipleSelect = 'MULTIPLE_SELECT',
+  Time = 'TIME',
+  Date = 'DATE',
+  TimeDate = 'TIME_DATE'
 }
 
 export type EditRowInput = {
@@ -298,6 +301,16 @@ export type GetDraftsQuery = (
   ) }
 );
 
+export type SaveDraftMutationVariables = Exact<{
+  values: TableInput;
+}>;
+
+
+export type SaveDraftMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'saveDraft'>
+);
+
 
 export const GetDraftDocument = gql`
     query GetDraft($key: String!) {
@@ -384,6 +397,37 @@ export function useGetDraftsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type GetDraftsQueryHookResult = ReturnType<typeof useGetDraftsQuery>;
 export type GetDraftsLazyQueryHookResult = ReturnType<typeof useGetDraftsLazyQuery>;
 export type GetDraftsQueryResult = Apollo.QueryResult<GetDraftsQuery, GetDraftsQueryVariables>;
+export const SaveDraftDocument = gql`
+    mutation SaveDraft($values: TableInput!) {
+  saveDraft(values: $values) @client
+}
+    `;
+export type SaveDraftMutationFn = Apollo.MutationFunction<SaveDraftMutation, SaveDraftMutationVariables>;
+
+/**
+ * __useSaveDraftMutation__
+ *
+ * To run a mutation, you first call `useSaveDraftMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSaveDraftMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [saveDraftMutation, { data, loading, error }] = useSaveDraftMutation({
+ *   variables: {
+ *      values: // value for 'values'
+ *   },
+ * });
+ */
+export function useSaveDraftMutation(baseOptions?: Apollo.MutationHookOptions<SaveDraftMutation, SaveDraftMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SaveDraftMutation, SaveDraftMutationVariables>(SaveDraftDocument, options);
+      }
+export type SaveDraftMutationHookResult = ReturnType<typeof useSaveDraftMutation>;
+export type SaveDraftMutationResult = Apollo.MutationResult<SaveDraftMutation>;
+export type SaveDraftMutationOptions = Apollo.BaseMutationOptions<SaveDraftMutation, SaveDraftMutationVariables>;
 export type DraftKeySpecifier = ('title' | 'target' | 'deadline' | 'fields' | DraftKeySpecifier)[];
 export type DraftFieldPolicy = {
 	title?: FieldPolicy<any> | FieldReadFunction<any>,

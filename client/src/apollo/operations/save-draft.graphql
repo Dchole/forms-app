@@ -1,0 +1,3 @@
+mutation SaveDraft($values: TableInput!) {
+  saveDraft(values: $values) @client
+}

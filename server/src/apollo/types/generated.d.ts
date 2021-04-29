@@ -214,12 +214,15 @@ export type TableConnection = {
 };
 
 export enum EFields {
-  Text = 'TEXT',
+  ShortText = 'SHORT_TEXT',
   LongText = 'LONG_TEXT',
   Number = 'NUMBER',
   Boolean = 'BOOLEAN',
-  SingleChoice = 'SINGLE_CHOICE',
-  MultipleSelect = 'MULTIPLE_SELECT'
+  SelectOne = 'SELECT_ONE',
+  MultipleSelect = 'MULTIPLE_SELECT',
+  Time = 'TIME',
+  Date = 'DATE',
+  TimeDate = 'TIME_DATE'
 }
 
 export type AdditionalEntityFields = {

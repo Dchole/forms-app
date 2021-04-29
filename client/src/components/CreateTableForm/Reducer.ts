@@ -1,11 +1,12 @@
 import { customAlphabet } from "nanoid";
 import { lowercase } from "nanoid-dictionary";
+import { EFields, Maybe } from "../../apollo/generated/graphql";
 import fieldTypes from "../CreateTableForm/fieldTypes";
 
 interface IField {
   _id: string;
   name: string;
-  type: string;
+  type: Maybe<EFields>;
 }
 
 export interface IValues {
@@ -19,7 +20,7 @@ const nanoid = customAlphabet(lowercase, 10);
 
 const defaultField = {
   name: "",
-  type: fieldTypes.Text[0].text
+  type: fieldTypes.Text[0].field
 };
 
 export const initialState: IValues = {
@@ -35,7 +36,7 @@ export type TAction =
   | { type: "SET_TARGET"; payload?: number }
   | { type: "ADD_FIELD"; payload: string }
   | { type: "SET_FIELD_NAME"; payload: { _id: string; name: string } }
-  | { type: "SET_FIELD_TYPE"; payload: { _id: string; type: string } }
+  | { type: "SET_FIELD_TYPE"; payload: { _id: string; type: EFields } }
   | { type: "REMOVE_FIELD"; payload: string };
 
 const reducer = (state = initialState, { type, payload }: TAction) => {
@@ -84,7 +85,7 @@ const reducer = (state = initialState, { type, payload }: TAction) => {
 
     case "SET_FIELD_TYPE":
       const setTypes = state.fields.map(field => {
-        const fieldToUpdate = payload as { _id: string; type: string };
+        const fieldToUpdate = payload as { _id: string; type: EFields };
 
         return field._id === fieldToUpdate._id
           ? { ...field, type: fieldToUpdate.type }

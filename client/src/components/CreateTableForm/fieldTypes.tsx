@@ -5,40 +5,41 @@ import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import TimeIcon from "@material-ui/icons/AccessTime";
 import DateIcon from "@material-ui/icons/Today";
 import TimeDateIcon from "@material-ui/icons/EventBusy";
+import { EFields } from "../../apollo/generated/graphql";
 
 const fieldTypes = {
   Text: [
     {
       icon: <ShortTextIcon />,
-      text: "Short Text"
+      field: EFields["ShortText"]
     },
     {
       icon: <LongTextIcon />,
-      text: "Long Text"
+      field: EFields["LongText"]
     }
   ],
   Select: [
     {
       icon: <RadioButtonIcon />,
-      text: "Select One"
+      field: EFields["SelectOne"]
     },
     {
       icon: <CheckBoxIcon />,
-      text: "Multiple Select"
+      field: EFields["MultipleSelect"]
     }
   ],
   DateTime: [
     {
       icon: <TimeIcon />,
-      text: "Time"
+      field: EFields["Time"]
     },
     {
       icon: <DateIcon />,
-      text: "Date"
+      field: EFields["Date"]
     },
     {
       icon: <TimeDateIcon />,
-      text: "Time & Date"
+      field: EFields["TimeDate"]
     }
   ]
 };
