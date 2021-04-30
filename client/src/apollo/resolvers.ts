@@ -32,12 +32,12 @@ const resolvers: Resolvers = {
     }
   },
   Mutation: {
-    async saveDraft(_, { values }, { cache }) {
+    async saveDraft(_, { key, values }, { cache }) {
       const data = cache.readQuery({ query: GetDraftsDocument });
 
       const draft: DraftData = values;
 
-      const key = await new Draft().saveDraft(values);
+      await new Draft().saveDraft(key, values);
 
       draft.__typename = "DraftData";
       draft.fields.map(field => (field.__typename = "Field"));

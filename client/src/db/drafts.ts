@@ -12,8 +12,8 @@ class Draft extends Db {
     return this.collection.doc(key).get();
   }
 
-  async saveDraft(values: IValues): Promise<string> {
-    return this.collection.add(values).then(({ data }: any) => data.key);
+  async saveDraft(key: string, values: IValues): Promise<string> {
+    return this.collection.add(values, key);
   }
 
   public updateDraft(key: string, values: IValues) {

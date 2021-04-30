@@ -7,7 +7,7 @@ const typeDefs = gql`
   }
 
   extend type Mutation {
-    saveDraft(values: TableInput!): String!
+    saveDraft(key: String!, values: TableInput!): String!
     updateDraft(key: String!, values: TableInput!): String
     deleteDraft(key: String!): String
   }

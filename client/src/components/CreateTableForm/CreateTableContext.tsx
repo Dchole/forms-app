@@ -30,7 +30,9 @@ const CreateTableProvider: React.FC = ({ children }) => {
       if (draftKey) {
         await draft.updateDraft(draftKey, values);
       } else if (window.history.state) {
-        const { data } = await saveDraft({ variables: { values } });
+        const key = window.location.pathname.split("/").pop() || "";
+
+        const { data } = await saveDraft({ variables: { key, values } });
         data && setDraftKey(data.saveDraft);
       }
     })();

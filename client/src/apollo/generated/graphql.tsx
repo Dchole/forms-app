@@ -134,6 +134,7 @@ export type MutationRegisterArgs = {
 
 
 export type MutationSaveDraftArgs = {
+  key: Scalars['String'];
   values: TableInput;
 };
 
@@ -307,6 +308,7 @@ export type GetDraftsQuery = (
 );
 
 export type SaveDraftMutationVariables = Exact<{
+  key: Scalars['String'];
   values: TableInput;
 }>;
 
@@ -331,7 +333,7 @@ export type UpdateDraftMutation = (
 export const GetDraftDocument = gql`
     query GetDraft($key: String!) {
   draft(key: $key) @client {
-    key @export(as: _id)
+    key
     data {
       title
       target
@@ -376,7 +378,7 @@ export type GetDraftQueryResult = Apollo.QueryResult<GetDraftQuery, GetDraftQuer
 export const GetDraftsDocument = gql`
     query GetDrafts {
   drafts @client {
-    key @export(as: _id)
+    key
     data {
       title
       target
@@ -418,8 +420,8 @@ export type GetDraftsQueryHookResult = ReturnType<typeof useGetDraftsQuery>;
 export type GetDraftsLazyQueryHookResult = ReturnType<typeof useGetDraftsLazyQuery>;
 export type GetDraftsQueryResult = Apollo.QueryResult<GetDraftsQuery, GetDraftsQueryVariables>;
 export const SaveDraftDocument = gql`
-    mutation SaveDraft($values: TableInput!) {
-  saveDraft(values: $values) @client
+    mutation SaveDraft($key: String!, $values: TableInput!) {
+  saveDraft(key: $key, values: $values) @client
 }
     `;
 export type SaveDraftMutationFn = Apollo.MutationFunction<SaveDraftMutation, SaveDraftMutationVariables>;
@@ -437,6 +439,7 @@ export type SaveDraftMutationFn = Apollo.MutationFunction<SaveDraftMutation, Sav
  * @example
  * const [saveDraftMutation, { data, loading, error }] = useSaveDraftMutation({
  *   variables: {
+ *      key: // value for 'key'
  *      values: // value for 'values'
  *   },
  * });

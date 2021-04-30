@@ -59,9 +59,7 @@ const Homepage = () => {
         </Fab>
       </Container>
       <CreateTableProvider>
-        <Dialog open={open} handleClose={handleClose}>
-          <CreateTableForm />
-        </Dialog>
+        <CreateTableForm open={open} handleClose={handleClose} />
       </CreateTableProvider>
     </Layout>
   );
