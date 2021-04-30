@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { client } from "..";
 import {
   Draft,
-  GetDraftsDocument,
+  GetDraftsDocument as query,
   GetDraftsQuery
 } from "../apollo/generated/graphql";
 import Layout from "../components/Layout";
@@ -13,9 +13,8 @@ const Dashboard = () => {
   useEffect(() => {
     (async () => {
       const { data } = await client.query<GetDraftsQuery>({
-        query: GetDraftsDocument
+        query
       });
-
       setDrafts(data.drafts);
     })();
   }, []);
