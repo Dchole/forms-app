@@ -1,3 +1,4 @@
+import { InMemoryCache } from "@apollo/client";
 import { TypedTypePolicies } from "./generated/graphql";
 
 const typePolicies: TypedTypePolicies = {
@@ -6,4 +7,6 @@ const typePolicies: TypedTypePolicies = {
   }
 };
 
-export default typePolicies;
+const cache = new InMemoryCache({ typePolicies });
+
+export default cache;

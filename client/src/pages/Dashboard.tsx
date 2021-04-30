@@ -1,17 +1,24 @@
+import { useEffect, useState } from "react";
+import { client } from "..";
 import {
-  useGetDraftQuery,
-  useGetDraftsQuery
+  Draft,
+  GetDraftsDocument,
+  GetDraftsQuery
 } from "../apollo/generated/graphql";
 import Layout from "../components/Layout";
 
 const Dashboard = () => {
-  const { data: draft } = useGetDraftQuery({
-    variables: { key: "11eba915ba1afbb0a3082b233660f38c" }
-  });
+  const [drafts, setDrafts] = useState<Draft[]>([]);
 
-  const { data: drafts } = useGetDraftsQuery();
+  useEffect(() => {
+    (async () => {
+      const { data } = await client.query<GetDraftsQuery>({
+        query: GetDraftsDocument
+      });
 
-  console.log({ draft, drafts });
+      setDrafts(data.drafts);
+    })();
+  }, []);
 
   return <Layout></Layout>;
 };

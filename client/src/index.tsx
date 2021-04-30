@@ -8,13 +8,13 @@ import reportWebVitals from "./reportWebVitals";
 import theme from "./lib/theme";
 import DateFnsUtils from "@date-io/date-fns";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { ApolloClient, ApolloProvider } from "@apollo/client";
 import typeDefs from "./apollo/type-defs";
-import typePolicies from "./apollo/type-policies";
 import resolvers from "./apollo/resolvers";
+import cache from "./apollo/cache";
 
-const client = new ApolloClient({
-  cache: new InMemoryCache({ typePolicies }),
+export const client = new ApolloClient({
+  cache,
   uri:
     process.env.NODE_ENV === "production"
       ? process.env.REMOTE_SERVER
