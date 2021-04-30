@@ -1,14 +1,17 @@
-import { createContext, useReducer } from "react";
-import { insertNewTable } from "../../db/tables";
+import { createContext, useEffect, useReducer, useState } from "react";
+import { useLocation } from "react-router";
+import { EFields, useSaveDraftMutation } from "../../apollo/generated/graphql";
+import Draft from "../../db/drafts";
+import Table from "../../db/tables";
 import reducer, { initialState, IValues } from "./Reducer";
 
 interface ICreateTableContext {
   values: IValues;
   setTitle: (title: string) => void;
-  addField: (id: string) => void;
-  setFieldName: (id: string, name: string) => void;
-  setFieldType: (id: string, type: string) => void;
-  removeField: (id: string) => void;
+  addField: (_id: string) => void;
+  setFieldName: (_id: string, name: string) => void;
+  setFieldType: (_id: string, type: EFields) => void;
+  removeField: (_id: string) => void;
   setDeadline: (date?: string) => void;
   setTarget: (target?: number) => void;
   handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
@@ -17,7 +20,24 @@ interface ICreateTableContext {
 export const CreateTableContext = createContext({} as ICreateTableContext);
 
 const CreateTableProvider: React.FC = ({ children }) => {
+  const { pathname } = useLocation();
   const [values, dispatch] = useReducer(reducer, initialState);
+  const [draftKey, setDraftKey] = useState("");
+  const [saveDraft] = useSaveDraftMutation();
+
+  useEffect(() => {
+    (async () => {
+      const draft = new Draft();
+
+      if (draftKey) {
+        await draft.updateDraft(draftKey, values);
+      } else {
+        console.log(pathname);
+        const { data } = await saveDraft({ variables: { values } });
+        data && setDraftKey(data.saveDraft);
+      }
+    })();
+  }, [values, draftKey, saveDraft, pathname]);
 
   const setTitle = (title: string) => {
     dispatch({
@@ -26,35 +46,35 @@ const CreateTableProvider: React.FC = ({ children }) => {
     });
   };
 
-  const addField = (id: string) => {
+  const addField = (_id: string) => {
     dispatch({
       type: "ADD_FIELD",
-      payload: id
+      payload: _id
     });
   };
 
-  const removeField = (id: string) => {
+  const removeField = (_id: string) => {
     dispatch({
       type: "REMOVE_FIELD",
-      payload: id
+      payload: _id
     });
   };
 
-  const setFieldName = (id: string, name: string) => {
+  const setFieldName = (_id: string, name: string) => {
     dispatch({
       type: "SET_FIELD_NAME",
       payload: {
-        id,
+        _id,
         name
       }
     });
   };
 
-  const setFieldType = (id: string, type: string) => {
+  const setFieldType = (_id: string, type: EFields) => {
     dispatch({
       type: "SET_FIELD_TYPE",
       payload: {
-        id,
+        _id,
         type
       }
     });
@@ -76,8 +96,13 @@ const CreateTableProvider: React.FC = ({ children }) => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const tables = await insertNewTable(values);
-    console.log(tables);
+
+    try {
+      new Table().createTable(values);
+    } catch (error) {
+      console.log(error);
+    } finally {
+    }
   };
 
   return (

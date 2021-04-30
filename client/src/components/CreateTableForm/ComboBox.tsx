@@ -9,15 +9,19 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import fieldTypes from "./fieldTypes";
 import { CreateTableContext } from "./CreateTableContext";
+import { EFields, Maybe } from "../../apollo/generated/graphql";
+import convertToReadable from "../../utils/enumify";
 
 // Had to create a function by means of avoiding the use of "Fragment"
 // because parent(Select) doesn't accept "Fragment"
-const mapOptions = (options: { icon: JSX.Element; text: string }[]) =>
-  options.map(({ icon, text }) => (
-    <MenuItem value={text}>
+const mapOptions = (options: { icon: JSX.Element; field: EFields }[]) =>
+  options.map(({ icon, field }) => (
+    <MenuItem value={field}>
       <Grid alignItems="center" container>
         <ListItemIcon>{icon}</ListItemIcon>
-        <ListItemText style={{ margin: 0 }}>{text}</ListItemText>
+        <ListItemText style={{ margin: 0 }}>
+          {convertToReadable(field)}
+        </ListItemText>
       </Grid>
     </MenuItem>
   ));
@@ -25,14 +29,14 @@ const mapOptions = (options: { icon: JSX.Element; text: string }[]) =>
 interface IComboBox {
   mobile: boolean;
   fieldID: string;
-  type: string;
+  type: Maybe<EFields>;
 }
 
 const ComboBox: React.FC<IComboBox> = ({ mobile, fieldID, type }) => {
   const { setFieldType } = useContext(CreateTableContext);
 
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setFieldType(fieldID, event.target.value as string);
+    setFieldType(fieldID, event.target.value as EFields);
   };
 
   return (

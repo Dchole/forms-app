@@ -8,16 +8,32 @@ import reportWebVitals from "./reportWebVitals";
 import theme from "./lib/theme";
 import DateFnsUtils from "@date-io/date-fns";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
+import { ApolloClient, ApolloProvider } from "@apollo/client";
+import typeDefs from "./apollo/type-defs";
+import resolvers from "./apollo/resolvers";
+import cache from "./apollo/cache";
+
+export const client = new ApolloClient({
+  cache,
+  uri:
+    process.env.NODE_ENV === "production"
+      ? process.env.REMOTE_SERVER
+      : process.env.LOCAL_SERVER,
+  typeDefs,
+  resolvers
+});
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-      <ThemeProvider theme={theme}>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <CssBaseline />
-          <App />
-        </MuiPickersUtilsProvider>
-      </ThemeProvider>
+      <ApolloProvider client={client}>
+        <ThemeProvider theme={theme}>
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <CssBaseline />
+            <App />
+          </MuiPickersUtilsProvider>
+        </ThemeProvider>
+      </ApolloProvider>
     </BrowserRouter>
   </React.StrictMode>,
   document.getElementById("root")

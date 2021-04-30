@@ -1,0 +1,3 @@
+mutation UpdateDraft($key: String!, $values: TableInput!) {
+  updateDraft(key: $key, values: $values) @client
+}

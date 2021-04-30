@@ -1,12 +1,15 @@
 import { Document, model, Schema } from "mongoose";
 
 type EFieldType =
-  | "TEXT"
+  | "SHORT_TEXT"
   | "LONG_TEXT"
   | "NUMBER"
   | "BOOLEAN"
-  | "SINGLE_CHOICE"
-  | "MULTIPLE_SELECT";
+  | "SELECT_ONE"
+  | "MULTIPLE_SELECT"
+  | "TIME"
+  | "DATE"
+  | "TIME_DATE";
 
 export interface IField extends Document {
   name: string;
@@ -21,7 +24,7 @@ export interface IRow extends Document {
 
 export interface ITableSchema extends Document {
   title: string;
-  limit?: number;
+  target?: number;
   deadline?: string;
   disabled: boolean;
   fields: IField[];
@@ -35,7 +38,7 @@ const TableSchema = new Schema(
       type: String,
       required: true
     },
-    limit: {
+    target: {
       type: Number
     },
     deadline: {
@@ -54,14 +57,17 @@ const TableSchema = new Schema(
         type: {
           type: String,
           enum: [
-            "TEXT",
+            "SHORT_TEXT",
             "LONG_TEXT",
             "NUMBER",
             "BOOLEAN",
-            "SINGLE_CHOICE",
-            "MULTIPLE_SELECT"
+            "SELECT_ONE",
+            "MULTIPLE_SELECT",
+            "TIME",
+            "DATE",
+            "TIME_DATE"
           ],
-          default: "TEXT"
+          default: "SHORT_TEXT"
         }
       }
     ],

@@ -1,0 +1,12 @@
+overwrite: true
+schema:
+  - "src/apollo/type-defs.ts"
+  - "http://localhost:4000"
+documents: "src/**/*.graphql"
+generates:
+  src/apollo/generated/graphql.tsx:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"
+      - "typescript-apollo-client-helpers"

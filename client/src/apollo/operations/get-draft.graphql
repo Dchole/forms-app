@@ -1,0 +1,15 @@
+query GetDraft($key: String!) {
+  draft(key: $key) @client {
+    key
+    data {
+      title
+      target
+      deadline
+      fields {
+        _id
+        name
+        type
+      }
+    }
+  }
+}

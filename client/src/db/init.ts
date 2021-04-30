@@ -1,6 +1,11 @@
-import Zango from "zangodb";
-import { initialState } from "../components/CreateTableForm/Reducer";
+import Localbase from "localbase";
 
-const db = new Zango.Db("forms", 1, { tables: Object.keys(initialState) });
+class Db {
+  private db = new Localbase("forms");
 
-export default db;
+  public get database() {
+    return this.db;
+  }
+}
+
+export default Db;

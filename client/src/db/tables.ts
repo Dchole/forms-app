@@ -1,12 +1,22 @@
-import { IValues } from "../components/CreateTableForm/Reducer";
-import db from "./init";
+import { initialState, IValues } from "../components/CreateTableForm/Reducer";
+import Db from "./init";
 
-const tables = db.collection("tables");
+class Table extends Db {
+  private collection = this.database.collection("tables");
+  private data = {};
 
-export const getAllTables = async () => {
-  return tables.find({});
-};
+  constructor() {
+    super();
+    this.data = { ...initialState, rows: [], admin: "" };
+  }
 
-export const insertNewTable = async (values: IValues) => {
-  return tables.insert(values).then(() => tables.find({}));
-};
+  public get tables() {
+    return this.collection.get();
+  }
+
+  async createTable(values: IValues) {
+    return this.collection.add({ ...this.data, ...values });
+  }
+}
+
+export default Table;

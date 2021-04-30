@@ -49,7 +49,7 @@ input UpdateInput {
 
 input TableInput {
   title: String!
-  limit: Int
+  target: Int
   deadline: String
   disabled: Boolean
   fields: [FieldInput!]!
@@ -98,7 +98,7 @@ type User {
 type Table {
   _id: ID!
   title: String!
-  limit: Int
+  target: Int
   deadline: String
   fields: [Field!]!
   rows: [Row!]!
@@ -124,10 +124,13 @@ type TableConnection {
 }
 
 enum EFields {
-  TEXT
+  SHORT_TEXT
   LONG_TEXT
   NUMBER
   BOOLEAN
-  SINGLE_CHOICE
+  SELECT_ONE
   MULTIPLE_SELECT
+  TIME
+  DATE
+  TIME_DATE
 }

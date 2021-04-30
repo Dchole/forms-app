@@ -17,5 +17,5 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src", "quicklink.d.ts"]
+  "include": ["src", "quicklink.d.ts", "localbase.d.ts"]
 }
