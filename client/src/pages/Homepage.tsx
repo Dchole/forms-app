@@ -15,9 +15,9 @@ import Dialog from "../components/CreateTableForm/Dialog";
 const CreateTableForm = lazy(() => import("../components/CreateTableForm"));
 
 const Homepage = () => {
+  const classes = useHomeStyles();
   const draftId = useRef(generateId());
   const { goBack } = useHistory();
-  const classes = useHomeStyles();
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => {

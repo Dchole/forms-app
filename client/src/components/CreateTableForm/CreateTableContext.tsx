@@ -1,5 +1,4 @@
 import { createContext, useEffect, useReducer, useState } from "react";
-import { useLocation } from "react-router";
 import { EFields, useSaveDraftMutation } from "../../apollo/generated/graphql";
 import Draft from "../../db/drafts";
 import Table from "../../db/tables";
@@ -20,7 +19,6 @@ interface ICreateTableContext {
 export const CreateTableContext = createContext({} as ICreateTableContext);
 
 const CreateTableProvider: React.FC = ({ children }) => {
-  const { pathname } = useLocation();
   const [values, dispatch] = useReducer(reducer, initialState);
   const [draftKey, setDraftKey] = useState("");
   const [saveDraft] = useSaveDraftMutation();
@@ -31,13 +29,12 @@ const CreateTableProvider: React.FC = ({ children }) => {
 
       if (draftKey) {
         await draft.updateDraft(draftKey, values);
-      } else {
-        console.log(pathname);
+      } else if (window.history.state) {
         const { data } = await saveDraft({ variables: { values } });
         data && setDraftKey(data.saveDraft);
       }
     })();
-  }, [values, draftKey, saveDraft, pathname]);
+  }, [values, draftKey, saveDraft]);
 
   const setTitle = (title: string) => {
     dispatch({
