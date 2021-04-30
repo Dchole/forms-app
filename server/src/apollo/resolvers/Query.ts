@@ -17,9 +17,9 @@ const Query: QueryResolvers<TContext> = {
   table: async (_, { id }, { dataSources: { tables } }) => {
     return tables.getTable(id);
   },
-  tables: async (
+  drafts: async (
     _root,
-    { limit, page, filter },
+    { limit, page },
     { dataSources: { tables, users } }
   ) => {
     const userID = users.getUserID();
@@ -28,7 +28,29 @@ const Query: QueryResolvers<TContext> = {
       userID,
       limit as number | undefined,
       page as number | undefined,
-      filter
+      true
+    );
+
+    const hasMore = await tables.hasMore(userID, fetchedTables);
+
+    if (!fetchedTables) throw new ApolloError("Something went wrong");
+
+    return {
+      node: fetchedTables,
+      hasMore
+    };
+  },
+  tables: async (
+    _root,
+    { limit, page },
+    { dataSources: { tables, users } }
+  ) => {
+    const userID = users.getUserID();
+
+    const fetchedTables = await tables.getTables(
+      userID,
+      limit as number | undefined,
+      page as number | undefined
     );
 
     const hasMore = await tables.hasMore(userID, fetchedTables);

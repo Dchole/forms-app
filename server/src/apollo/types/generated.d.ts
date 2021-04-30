@@ -24,8 +24,15 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   currentUser: User;
+  draft: Table;
   table: Table;
+  drafts: TableConnection;
   tables: TableConnection;
+};
+
+
+export type QueryDraftArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -34,10 +41,15 @@ export type QueryTableArgs = {
 };
 
 
+export type QueryDraftsArgs = {
+  limit?: Maybe<Scalars['Int']>;
+  page?: Maybe<Scalars['Int']>;
+};
+
+
 export type QueryTablesArgs = {
   limit?: Maybe<Scalars['Int']>;
   page?: Maybe<Scalars['Int']>;
-  filter?: Maybe<TableFilterInput>;
 };
 
 export type Mutation = {
@@ -45,6 +57,7 @@ export type Mutation = {
   login: Token;
   register: User;
   updateUser: User;
+  createDraft: Table;
   createTable: Table;
   deleteTable: Scalars['Boolean'];
   addRow: Row;
@@ -66,6 +79,11 @@ export type MutationRegisterArgs = {
 
 export type MutationUpdateUserArgs = {
   args: UpdateInput;
+};
+
+
+export type MutationCreateDraftArgs = {
+  args: TableInput;
 };
 
 
@@ -104,11 +122,6 @@ export type Subscription = {
   editedRow: Row;
   deletedRow: Row;
   toggleDisableTable: Scalars['Boolean'];
-};
-
-export type TableFilterInput = {
-  key: Scalars['String'];
-  value: Scalars['String'];
 };
 
 export type LoginInput = {
@@ -190,6 +203,7 @@ export type Table = {
   fields: Array<Field>;
   rows: Array<Row>;
   disabled: Scalars['Boolean'];
+  draft: Scalars['Boolean'];
 };
 
 export type Field = {
@@ -314,9 +328,8 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Subscription: ResolverTypeWrapper<{}>;
-  TableFilterInput: TableFilterInput;
-  String: ResolverTypeWrapper<Scalars['String']>;
   LoginInput: LoginInput;
+  String: ResolverTypeWrapper<Scalars['String']>;
   RegisterInput: RegisterInput;
   UpdateInput: UpdateInput;
   TableInput: TableInput;
@@ -343,9 +356,8 @@ export type ResolversParentTypes = {
   Mutation: {};
   Boolean: Scalars['Boolean'];
   Subscription: {};
-  TableFilterInput: TableFilterInput;
-  String: Scalars['String'];
   LoginInput: LoginInput;
+  String: Scalars['String'];
   RegisterInput: RegisterInput;
   UpdateInput: UpdateInput;
   TableInput: TableInput;
@@ -400,7 +412,9 @@ export type MapDirectiveResolver<Result, Parent, ContextType = any, Args = MapDi
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   currentUser?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  draft?: Resolver<ResolversTypes['Table'], ParentType, ContextType, RequireFields<QueryDraftArgs, 'id'>>;
   table?: Resolver<ResolversTypes['Table'], ParentType, ContextType, RequireFields<QueryTableArgs, 'id'>>;
+  drafts?: Resolver<ResolversTypes['TableConnection'], ParentType, ContextType, RequireFields<QueryDraftsArgs, never>>;
   tables?: Resolver<ResolversTypes['TableConnection'], ParentType, ContextType, RequireFields<QueryTablesArgs, never>>;
 };
 
@@ -408,6 +422,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   login?: Resolver<ResolversTypes['Token'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'args'>>;
   register?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationRegisterArgs, 'args'>>;
   updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'args'>>;
+  createDraft?: Resolver<ResolversTypes['Table'], ParentType, ContextType, RequireFields<MutationCreateDraftArgs, 'args'>>;
   createTable?: Resolver<ResolversTypes['Table'], ParentType, ContextType, RequireFields<MutationCreateTableArgs, 'args'>>;
   deleteTable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteTableArgs, 'id'>>;
   addRow?: Resolver<ResolversTypes['Row'], ParentType, ContextType, RequireFields<MutationAddRowArgs, 'args'>>;
@@ -451,6 +466,7 @@ export type TableResolvers<ContextType = any, ParentType extends ResolversParent
   fields?: Resolver<Array<ResolversTypes['Field']>, ParentType, ContextType>;
   rows?: Resolver<Array<ResolversTypes['Row']>, ParentType, ContextType>;
   disabled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  draft?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

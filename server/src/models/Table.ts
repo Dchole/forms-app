@@ -29,6 +29,7 @@ export interface ITableSchema extends Document {
   disabled: boolean;
   fields: IField[];
   rows: IRow[];
+  draft: boolean;
   admin: string;
 }
 
@@ -84,6 +85,10 @@ const TableSchema = new Schema(
         }
       }
     ],
+    draft: {
+      type: Boolean,
+      default: true
+    },
     admin: {
       type: Schema.Types.ObjectId,
       ref: "Users"

@@ -1,13 +1,16 @@
 type Query {
   currentUser: User!
+  draft(id: ID!): Table!
   table(id: ID!): Table!
-  tables(limit: Int, page: Int, filter: TableFilterInput): TableConnection!
+  drafts(limit: Int, page: Int): TableConnection!
+  tables(limit: Int, page: Int): TableConnection!
 }
 
 type Mutation {
   login(args: LoginInput!): Token!
   register(args: RegisterInput!): User!
   updateUser(args: UpdateInput!): User!
+  createDraft(args: TableInput!): Table!
   createTable(args: TableInput!): Table!
   deleteTable(id: ID!): Boolean!
   addRow(args: AddRowInput!): Row!
@@ -21,11 +24,6 @@ type Subscription {
   editedRow: Row!
   deletedRow: Row!
   toggleDisableTable: Boolean!
-}
-
-input TableFilterInput {
-  key: String!
-  value: String!
 }
 
 input LoginInput {
@@ -103,6 +101,7 @@ type Table {
   fields: [Field!]!
   rows: [Row!]!
   disabled: Boolean!
+  draft: Boolean!
 }
 
 type Field {

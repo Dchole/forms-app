@@ -6,8 +6,7 @@ import type {
   TableInput,
   Table as TTable,
   Row,
-  Maybe,
-  TableFilterInput
+  Maybe
 } from "../types/generated";
 import type { ITableSchema, IRow } from "../../models/Table";
 import { ForbiddenError } from "apollo-server-errors";
@@ -16,8 +15,18 @@ class Table extends MongoDataSource<ITableSchema> {
   tableReducer(table?: ITableSchema | null): TTable {
     if (!table) throw new Error("Something went wrong!");
 
-    const { _id, title, fields, disabled, deadline, rows, target } = table;
-    return { _id, title, fields, disabled, deadline, rows, target };
+    const {
+      _id,
+      title,
+      fields,
+      disabled,
+      deadline,
+      rows,
+      target,
+      draft
+    } = table;
+
+    return { _id, title, fields, disabled, deadline, rows, target, draft };
   }
 
   rowReducer(row?: Maybe<IRow>): Row {
@@ -47,17 +56,9 @@ class Table extends MongoDataSource<ITableSchema> {
     return this.tableReducer(table);
   }
 
-  async getTables(
-    userID: string,
-    limit = 6,
-    page = 1,
-    filter?: Maybe<TableFilterInput>
-  ) {
-    const tablesFilter = filter
-      ? this.model.find({ admin: userID, [filter.key]: filter.value })
-      : this.model.find({ admin: userID });
-
-    const tables = await tablesFilter
+  async getTables(admin: string, limit = 6, page = 1, draft = false) {
+    const tables = await this.model
+      .find({ admin, draft })
       .limit(limit)
       .skip((page - 1) * limit)
       .sort("-createdAt");
